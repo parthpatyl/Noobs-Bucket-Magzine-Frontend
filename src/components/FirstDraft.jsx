@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, BookOpen, Search, Heart, Share2, Bookmark } from 'lucide-react';
 import CategoryFilter from './CategoryFilter';
-import EditionCatalog from './EditionCatalog';
-import FeaturedArticle from './FeaturedArticle';
-
-
 
 const VirtualMagazine = () => {
-  // Existing state management
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState(null);
   const [savedArticles, setSavedArticles] = useState([]);
   const [likedArticles, setLikedArticles] = useState([]);
   const itemsPerPage = 8;
-  
-  // Your existing articles array
   const articles = [
     {
       id: 1,
@@ -84,7 +77,7 @@ const VirtualMagazine = () => {
     {
       id: 8,
       title: "Mindful Meditation",
-      category: "Burp Out",
+      category: "Sip N Click",
       image: "https://images.unsplash.com/photo-1445979323117-80453f573b71?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       excerpt: "Finding peace in the digital age",
       author: "Sarah Wilson",
@@ -92,7 +85,10 @@ const VirtualMagazine = () => {
       date: "2025-01-09"
     }
   ];
-  
+
+  // Get unique categories
+  const categories = [...new Set(articles.map(article => article.category))];
+
   // Filter and search articles
   const filteredArticles = articles.filter(article => {
     const matchesCategory = !activeCategory || article.category === activeCategory;
@@ -108,7 +104,7 @@ const VirtualMagazine = () => {
     currentPage * itemsPerPage
   );
 
-  // Existing functions
+  // Handle saving and liking articles
   const toggleSave = (articleId) => {
     setSavedArticles(prev => 
       prev.includes(articleId) 
@@ -125,6 +121,7 @@ const VirtualMagazine = () => {
     );
   };
 
+  // Share article
   const shareArticle = (article) => {
     if (navigator.share) {
       navigator.share({
@@ -135,6 +132,16 @@ const VirtualMagazine = () => {
     }
   };
 
+  // Dark mode detection
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => {
+      document.documentElement.classList.toggle('dark', e.matches);
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* Header */}
@@ -143,7 +150,7 @@ const VirtualMagazine = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <BookOpen className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Noobs Bucket</h1>
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Virtual Magazine</h1>
             </div>
             <div className="flex items-center space-x-4">
               <div className="relative">
@@ -164,130 +171,108 @@ const VirtualMagazine = () => {
         </div>
       </header>
 
+      {/* Category Filter */}
       <div className="container mx-auto px-4 py-6">
-        {/* Featured Article */}
-        <FeaturedArticle articles={articles} interval={5000} />
+        <CategoryFilter
+          categories={categories}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
+      </div>
 
-        {/* Three Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Edition Catalog */}
-          <div className="lg:col-span-3">
-            <div className="sticky top-4">
-              <EditionCatalog articles={articles} />
-            </div>
+      {/* Featured Article */}
+      <section className="container mx-auto px-4 py-8">
+        <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1587243241665-987415695428?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Featured Article"
+            className="w-full h-96 object-cover"
+          />
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+            <span className="text-blue-400 font-semibold">Featured</span>
+            <h2 className="text-4xl font-bold text-white mt-2">
+              The Evolution of Digital Publishing
+            </h2>
+            <p className="text-gray-200 mt-2">
+              How technology is transforming the way we consume written content
+            </p>
           </div>
+        </div>
+      </section>
 
-
-
-          {/* Main Articles */}
-          <div className="lg:col-span-6 space-y-6">
-            {currentArticles.map(article => (
-              <div key={article.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                        {article.category}
-                      </span>
-                      <h3 className="text-xl font-bold dark:text-white mt-2">{article.title}</h3>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button 
-                        onClick={() => toggleLike(article.id)}
-                        className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                          likedArticles.includes(article.id) ? 'text-red-500' : 'text-gray-500'
-                        }`}
-                      >
-                        <Heart className="h-5 w-5" fill={likedArticles.includes(article.id) ? "currentColor" : "none"} />
-                      </button>
-                      <button 
-                        onClick={() => toggleSave(article.id)}
-                        className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                          savedArticles.includes(article.id) ? 'text-blue-500' : 'text-gray-500'
-                        }`}
-                      >
-                        <Bookmark className="h-5 w-5" fill={savedArticles.includes(article.id) ? "currentColor" : "none"} />
-                      </button>
-                      <button 
-                        onClick={() => shareArticle(article)}
-                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
-                      >
-                        <Share2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-300">{article.excerpt}</p>
-                  <div className="mt-4 flex justify-between items-center">
-                    <div className="flex items-center space-x-4">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">{article.date}</span>
-                    </div>
-                    <button className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300">
-                      Read More →
+      {/* Article Grid */}
+      <section className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {currentArticles.map(article => (
+            <article key={article.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-200">
+              <img
+                src={article.image}
+                alt={article.title}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">{article.category}</span>
+                  <div className="flex space-x-2">
+                    <button 
+                      onClick={() => toggleLike(article.id)}
+                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                        likedArticles.includes(article.id) ? 'text-red-500' : 'text-gray-500'
+                      }`}
+                    >
+                      <Heart className="h-5 w-5" fill={likedArticles.includes(article.id) ? "currentColor" : "none"} />
+                    </button>
+                    <button 
+                      onClick={() => toggleSave(article.id)}
+                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                        savedArticles.includes(article.id) ? 'text-blue-500' : 'text-gray-500'
+                      }`}
+                    >
+                      <Bookmark className="h-5 w-5" fill={savedArticles.includes(article.id) ? "currentColor" : "none"} />
+                    </button>
+                    <button 
+                      onClick={() => shareArticle(article)}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                    >
+                      <Share2 className="h-5 w-5" />
                     </button>
                   </div>
                 </div>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white mt-2">{article.title}</h3>
+                <p className="text-gray-600 dark:text-gray-300 mt-2">{article.excerpt}</p>
+                <div className="mt-4 flex justify-between items-center">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{article.author}</span>
+                </div>
+                <button className="mt-4 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300">
+                  Read More →
+                </button>
               </div>
-            ))}
+            </article>
+          ))}
+        </div>
+      </section>
 
-            {/* Pagination */}
-            <div className="flex justify-center items-center space-x-4 mt-8">
-              <button 
-                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-6 w-6 dark:text-white" />
-              </button>
-              <span className="text-lg font-semibold dark:text-white">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button 
-                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronRight className="h-6 w-6 dark:text-white" />
-              </button>
-            </div>
-          </div>
-
-          {/* Saved Articles */}
-          <div className="lg:col-span-3">
-          <div className="sticky top-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-bold mb-4 dark:text-white">Saved Articles</h2>
-                {articles
-                  .filter(article => savedArticles.includes(article.id))
-                  .map(article => (
-                    <div key={article.id} className="border-b pb-4">
-                      <div className="aspect-video mb-2 overflow-hidden rounded-lg">
-                        <img
-                          src={article.image}
-                          alt={article.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <h4 className="font-medium dark:text-white">{article.title}</h4>
-                      <div className="flex justify-between items-center mt-2">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</p>
-                        <button 
-                          onClick={() => toggleSave(article.id)}
-                          className="text-blue-500"
-                        >
-                          <Bookmark className="h-4 w-4" fill="currentColor" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </div>
+      {/* Pagination */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center items-center space-x-4">
+          <button 
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft className="h-6 w-6 dark:text-white" />
+          </button>
+          <span className="text-lg font-semibold dark:text-white">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button 
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            <ChevronRight className="h-6 w-6 dark:text-white" />
+          </button>
         </div>
       </div>
     </div>
