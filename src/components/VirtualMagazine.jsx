@@ -4,6 +4,7 @@ import CategoryFilter from './CategoryFilter';
 import EditionCatalog from './EditionCatalog';
 import FeaturedArticle from './FeaturedArticle';
 import articlesData from './articles.json';
+import { useNavigate } from 'react-router-dom';
 
 const VirtualMagazine = () => {
   // State management with initial data from JSON
@@ -14,6 +15,11 @@ const VirtualMagazine = () => {
   const [savedArticles, setSavedArticles] = useState([]);
   const [likedArticles, setLikedArticles] = useState([]);
   const itemsPerPage = 8;
+  const navigate = useNavigate();
+  const handleReadMore = (article) => {
+    navigate(`/article/${article.id}`);
+  };
+  
 
   // Load articles from JSON file
   useEffect(() => {
@@ -89,6 +95,9 @@ const VirtualMagazine = () => {
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                 Subscribe
               </button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Login
+              </button>
             </div>
           </div>
         </div>
@@ -151,10 +160,8 @@ const VirtualMagazine = () => {
                         </button>
                         <button 
                           onClick={() => shareArticle(article)}
-                          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
-                        >
-                          <Share2 className="h-5 w-5" />
-                        </button>
+                          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500">
+                          <Share2 className="h-5 w-5" /></button>
                       </div>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300">{article.excerpt}</p>
@@ -163,11 +170,13 @@ const VirtualMagazine = () => {
                         <span className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</span>
                         <span className="text-sm text-gray-500 dark:text-gray-400">{article.date}</span>
                       </div>
-                      <button className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300">
-                        Read More →
-                      </button>
-                    </div>
+                      <button 
+                      onClick={() => handleReadMore(article)}
+                      className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300">
+                      Read More →
+                    </button>
                   </div>
+                </div>
                 </div>
               ))
             ) : (
