@@ -3,96 +3,26 @@ import { ChevronLeft, ChevronRight, BookOpen, Search, Heart, Share2, Bookmark } 
 import CategoryFilter from './CategoryFilter';
 import EditionCatalog from './EditionCatalog';
 import FeaturedArticle from './FeaturedArticle';
-
-
+import articlesData from './articles.json';
 
 const VirtualMagazine = () => {
-  // Existing state management
+  // State management with initial data from JSON
+  const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState(null);
   const [savedArticles, setSavedArticles] = useState([]);
   const [likedArticles, setLikedArticles] = useState([]);
   const itemsPerPage = 8;
-  
-  // Your existing articles array
-  const articles = [
-    {
-      id: 1,
-      title: "The Future of Technology",
-      category: "Bookmark",
-      image: "https://images.unsplash.com/photo-1705721357357-ab87523248f7?q=80&w=1854&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      excerpt: "Exploring the latest trends in artificial intelligence and machine learning",
-      readTime: "5 min read",
-      date: "2025-01-15"
-    },
-    {
-      id: 2,
-      title: "Sustainable Living",
-      category: "Tour Ticket",
-      image: "https://plus.unsplash.com/premium_photo-1687653079484-12a596ddf7a9?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      excerpt: "Simple ways to reduce your carbon footprint",
-      readTime: "4 min read",
-      date: "2025-01-14"
-    },
-    {
-      id: 3,
-      title: "Modern Architecture",
-      category: "TypoError",
-      image: "https://static.vecteezy.com/system/resources/thumbnails/033/692/769/small_2x/rear-view-of-journalists-interviewing-a-man-in-the-news-studio-media-interview-in-a-conference-room-microphones-press-conference-press-conference-ai-generated-free-photo.jpg",
-      excerpt: "Revolutionary building designs shaping our cities",
-      readTime: "4 min read",
-      date: "2025-01-14"
-    },
-    {
-      id: 4,
-      title: "Healthy Living",
-      category: "Ashed Archives",
-      image: "https://images.squarespace-cdn.com/content/v1/5d23fc4db9f14e0001763c43/1585335226592-L4JY2YJM11FLM0L6GA09/image-asset.jpeg",
-      excerpt: "Tips for maintaining a balanced lifestyle",
-      readTime: "4 min read",
-      date: "2025-01-14"
-    },
-    {
-      id: 5,
-      title: "Travel Destinations",
-      category: "Tarots",
-      image: "https://images.squarespace-cdn.com/content/v1/55d635efe4b0d6e1513565eb/1697334271234-WDTIZE69XVPKSNO0NW57/petr-sidorov-GESOWH4YLRI-unsplash.jpg?format=1500w",
-      excerpt: "Hidden gems around the world",
-      readTime: "4 min read",
-      date: "2025-01-14"
-    },
-    {
-      id: 6,
-      title: "Digital Art",
-      category: "Brain Breakers",
-      image: "https://images.unsplash.com/photo-1541692641319-981cc79ee10a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      excerpt: "The evolution of artistic expression in the digital age",
-      readTime: "4 min read",
-      date: "2025-01-14"
-    },
-    {
-      id: 7,
-      title: "The Art of Photography",
-      category: "Cheat Sheet",
-      image: "https://plus.unsplash.com/premium_photo-1690297732590-b9875f77471d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZGlnaXRhbCUyMGJyYWlufGVufDB8fDB8fHww",
-      excerpt: "Mastering composition and lighting techniques",
-      author: "Michael Brown",
-      readTime: "7 min read",
-      date: "2025-01-10"
-    },
-    {
-      id: 8,
-      title: "Mindful Meditation",
-      category: "Burp Out",
-      image: "https://images.unsplash.com/photo-1445979323117-80453f573b71?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      excerpt: "Finding peace in the digital age",
-      author: "Sarah Wilson",
-      readTime: "6 min read",
-      date: "2025-01-09"
-    }
-  ];
-  
+
+  // Load articles from JSON file
+  useEffect(() => {
+    setArticles(articlesData.articles);
+  }, []);
+
+  // Get unique categories from articles
+  const categories = [...new Set(articles.map(article => article.category))];
+
   // Filter and search articles
   const filteredArticles = articles.filter(article => {
     const matchesCategory = !activeCategory || article.category === activeCategory;
@@ -165,8 +95,15 @@ const VirtualMagazine = () => {
       </header>
 
       <div className="container mx-auto px-4 py-6">
+        {/* Category Filter */}
+        <CategoryFilter 
+          categories={categories}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
+
         {/* Featured Article */}
-        <FeaturedArticle articles={articles} interval={5000} />
+        {articles.length > 0 && <FeaturedArticle articles={articles} interval={5000} />}
 
         {/* Three Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -177,102 +114,101 @@ const VirtualMagazine = () => {
             </div>
           </div>
 
-
-
           {/* Main Articles */}
           <div className="lg:col-span-6 space-y-6">
-            {currentArticles.map(article => (
-              <div key={article.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                        {article.category}
-                      </span>
-                      <h3 className="text-xl font-bold dark:text-white mt-2">{article.title}</h3>
+            {currentArticles.length > 0 ? (
+              currentArticles.map(article => (
+                <div key={article.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                          {article.category}
+                        </span>
+                        <h3 className="text-xl font-bold dark:text-white mt-2">{article.title}</h3>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button 
+                          onClick={() => toggleLike(article.id)}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                            likedArticles.includes(article.id) ? 'text-red-500' : 'text-gray-500'
+                          }`}
+                        >
+                          <Heart className="h-5 w-5" fill={likedArticles.includes(article.id) ? "currentColor" : "none"} />
+                        </button>
+                        <button 
+                          onClick={() => toggleSave(article.id)}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                            savedArticles.includes(article.id) ? 'text-blue-500' : 'text-gray-500'
+                          }`}
+                        >
+                          <Bookmark className="h-5 w-5" fill={savedArticles.includes(article.id) ? "currentColor" : "none"} />
+                        </button>
+                        <button 
+                          onClick={() => shareArticle(article)}
+                          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                        >
+                          <Share2 className="h-5 w-5" />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex space-x-2">
-                      <button 
-                        onClick={() => toggleLike(article.id)}
-                        className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                          likedArticles.includes(article.id) ? 'text-red-500' : 'text-gray-500'
-                        }`}
-                      >
-                        <Heart className="h-5 w-5" fill={likedArticles.includes(article.id) ? "currentColor" : "none"} />
-                      </button>
-                      <button 
-                        onClick={() => toggleSave(article.id)}
-                        className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                          savedArticles.includes(article.id) ? 'text-blue-500' : 'text-gray-500'
-                        }`}
-                      >
-                        <Bookmark className="h-5 w-5" fill={savedArticles.includes(article.id) ? "currentColor" : "none"} />
-                      </button>
-                      <button 
-                        onClick={() => shareArticle(article)}
-                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
-                      >
-                        <Share2 className="h-5 w-5" />
+                    <p className="text-gray-600 dark:text-gray-300">{article.excerpt}</p>
+                    <div className="mt-4 flex justify-between items-center">
+                      <div className="flex items-center space-x-4">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">{article.date}</span>
+                      </div>
+                      <button className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300">
+                        Read More →
                       </button>
                     </div>
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-300">{article.excerpt}</p>
-                  <div className="mt-4 flex justify-between items-center">
-                    <div className="flex items-center space-x-4">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">{article.date}</span>
-                    </div>
-                    <button className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300">
-                      Read More →
-                    </button>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-600 dark:text-gray-400">No articles found.</p>
               </div>
-            ))}
+            )}
 
             {/* Pagination */}
-            <div className="flex justify-center items-center space-x-4 mt-8">
-              <button 
-                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-6 w-6 dark:text-white" />
-              </button>
-              <span className="text-lg font-semibold dark:text-white">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button 
-                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronRight className="h-6 w-6 dark:text-white" />
-              </button>
-            </div>
+            {currentArticles.length > 0 && (
+              <div className="flex justify-center items-center space-x-4 mt-8">
+                <button 
+                  className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-6 w-6 dark:text-white" />
+                </button>
+                <span className="text-lg font-semibold dark:text-white">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button 
+                  className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronRight className="h-6 w-6 dark:text-white" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Saved Articles */}
           <div className="lg:col-span-3">
-          <div className="sticky top-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-bold mb-4 dark:text-white">Saved Articles</h2>
+            <div className="sticky top-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold mb-4 dark:text-white">Saved Articles</h2>
                 {articles
                   .filter(article => savedArticles.includes(article.id))
                   .map(article => (
-                    <div key={article.id} className="border-b pb-4">
-                      <div className="aspect-video mb-2 overflow-hidden rounded-lg">
-                        <img
-                          src={article.image}
-                          alt={article.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                    <div key={article.id} className="border-b last:border-b-0 pb-4 mb-4 last:mb-0">
                       <h4 className="font-medium dark:text-white">{article.title}</h4>
                       <div className="flex justify-between items-center mt-2">
                         <p className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</p>

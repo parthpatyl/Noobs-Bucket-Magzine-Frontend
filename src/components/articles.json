@@ -1,0 +1,269 @@
+{
+    "articles": [
+      {
+        "id": 1,
+        "title": "The Future of Technology",
+        "category": "Bookmark",
+        "image": "https://images.unsplash.com/photo-1704312559273-751c063144c9?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+        "readTime": "5 min read",
+        "date": "2025-01-04",
+        "author": "John Doe",
+        "tags": ["AI", "Machine Learning"]
+      },
+      {
+        "id": 2,
+        "title": "Sustainable Living",
+        "category": "Tour Ticket",
+        "image": "https://images.unsplash.com/photo-1719251272717-8a08807a690e?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of de Finibus Bonorum et Malorum (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, Lorem ipsum dolor sit amet.., comes from a line in",
+        "readTime": "4 min read",
+        "date": "2025-01-04",
+        "author": "Jane Smith",
+        "tags": ["Environment", "Sustainability"]
+      },
+      {
+        "id": 3,
+        "title": "Common Typo Errors to Avoid",
+        "category": "Typo Error",
+        "image": "https://images.unsplash.com/photo-1737181585685-4540d5a64c3c?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Praesent porta, diam porttitor volutpat vulputate, dui urna commodo dolor, a volutpat orci ligula vitae tellus. Vestibulum vitae ligula libero. Etiam vel nibh arcu. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi porttitor faucibus massa ac aliquet. Fusce non elementum mi, in vulputate nisl. Donec tincidunt, mi id tempus suscipit, nibh odio ullamcorper massa, a vulputate mi massa et metus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nunc fermentum risus eget ante pharetra vehicula. Vivamus sed felis elit.",
+        "readTime": "3 min read",
+        "date": "2025-01-04",
+        "author": "Alice Johnson",
+        "tags": ["Writing", "Grammar"]
+      },
+      {
+        "id": 4,
+        "title": "Archived Memories",
+        "category": "Ashes Archives",
+        "image": "https://images.unsplash.com/photo-1737059102056-98aec4792309?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Sed congue gravida porttitor. Mauris quis pharetra mi. Aliquam odio ante, tempor nec nulla in, gravida finibus eros. Vestibulum fermentum hendrerit varius. Sed sed erat et lorem finibus dignissim vitae vitae nibh. Curabitur cursus pharetra interdum. Nulla placerat interdum tempus. Vestibulum libero nunc, rhoncus eget malesuada vel, tincidunt at justo. Donec tempus consectetur tortor ac eleifend. Phasellus consectetur felis eu faucibus tempor. In tincidunt metus consectetur ex interdum dictum. Ut quis eros bibendum leo mattis tempor.",
+        "readTime": "6 min read",
+        "date": "2025-01-04",
+        "author": "Bob Brown",
+        "tags": ["Memories", "History"]
+      },
+      {
+        "id": 5,
+        "title": "Mind-Bending Puzzles",
+        "category": "Brain Breakers",
+        "image": "https://images.unsplash.com/photo-1737181585685-4540d5a64c3c?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Donec vitae nisl odio. Fusce pharetra tempor erat. Quisque ullamcorper feugiat hendrerit. Curabitur imperdiet massa ac lacus pretium dictum. Etiam in finibus augue. Proin a varius lectus. Cras consectetur consequat neque. Duis eget gravida sapien, in consequat magna. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nunc ullamcorper tortor sed blandit facilisis.",
+        "readTime": "7 min read",
+        "date": "2025-01-04",
+        "author": "Charlie Davis",
+        "tags": ["Puzzles", "Brain Teasers"]
+      },
+      {
+        "id": 6,
+        "title": "Quick Cheat Sheet for Python",
+        "category": "Cheat Sheet",
+        "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Curabitur vitae egestas dolor, non blandit turpis. Integer tempus nunc non euismod maximus. Ut ac tincidunt leo. Vestibulum in sem euismod, gravida magna pellentesque, aliquam quam. Donec dignissim metus in tincidunt efficitur. Fusce eu pellentesque justo. Vestibulum at auctor nulla, quis vulputate nisl. Ut fermentum condimentum ultricies. Donec sit amet libero sit amet metus molestie finibus vitae ac arcu.",
+        "readTime": "2 min read",
+        "date": "2025-01-04",
+        "author": "David Wilson",
+        "tags": ["Programming", "Python"]
+      },
+      {
+        "id": 7,
+        "title": "Healthy Burping Techniques",
+        "category": "Burp Out",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Donec dictum rutrum lacus, a finibus mauris consectetur in. Donec faucibus maximus felis et fringilla. Pellentesque gravida, neque vitae pretium tincidunt, dolor metus vestibulum nisl, sit amet aliquam sem dui eget leo. Vestibulum fringilla, mauris eu rutrum viverra, justo dui venenatis tellus, sit amet facilisis orci enim id ex. Nullam scelerisque eu dui et aliquet. Nam placerat et sapien ut laoreet. Nullam mollis turpis purus, quis rhoncus erat venenatis at. Pellentesque venenatis arcu nisi, vitae dignissim augue tincidunt vel.",
+        "readTime": "4 min read",
+        "date": "2025-01-04",
+        "author": "Eve Taylor",
+        "tags": ["Health", "Wellness"]
+      },
+      {
+        "id": 8,
+        "title": "Understanding Tarot Cards",
+        "category": "Tarot Logist",
+        "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Donec vitae nisl odio. Fusce pharetra tempor erat. Quisque ullamcorper feugiat hendrerit. Curabitur imperdiet massa ac lacus pretium dictum. Etiam in finibus augue. Proin a varius lectus. Cras consectetur consequat neque. Duis eget gravida sapien, in consequat magna. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nunc ullamcorper tortor sed blandit facilisis.",
+        "readTime": "5 min read",
+        "date": "2025-01-04",
+        "author": "Frank White",
+        "tags": ["Tarot", "Spirituality"]
+      },
+      {
+        "id": 9,
+        "title": "Next Generation AI",
+        "category": "Bookmark",
+        "image": "https://images.unsplash.com/photo-1605379392883-9b5d4f17e1c7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Proin pharetra tempus ex sed efficitur. Sed interdum lobortis dignissim. Sed feugiat lacus vel luctus dignissim. Cras malesuada tortor egestas orci faucibus vehicula. Praesent eu sapien vitae odio bibendum consectetur sit amet nec dolor. Integer laoreet lacus urna, at lobortis libero ornare porta. Integer malesuada tincidunt eros, sed hendrerit erat. Quisque tincidunt nec sem ut fringilla. Ut at ipsum in est mollis tincidunt.",
+        "readTime": "5 min read",
+        "date": "2025-01-11",
+        "author": "Grace Green",
+        "tags": ["AI", "Future"]
+      },
+      {
+        "id": 10,
+        "title": "Best Tourist Spots",
+        "category": "Tour Ticket",
+        "image": "https://images.unsplash.com/photo-1737204310662-4d4a541ce471?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Fusce blandit nisl commodo bibendum tincidunt. In luctus diam non nisi auctor blandit eu in lectus. Nullam ac tristique ante. Morbi euismod imperdiet ex sit amet pellentesque. Nulla suscipit efficitur metus, a tempor nunc pellentesque nec. Etiam mauris leo, dignissim eget neque quis, elementum bibendum nisl. Proin vestibulum eleifend nisl, in bibendum dolor suscipit in. Nulla id nisl lorem.",
+        "readTime": "4 min read",
+        "date": "2025-01-11",
+        "author": "Henry Hill",
+        "tags": ["Travel", "Vacation"]
+      },
+      {
+        "id": 11,
+        "title": "Understanding Common Grammar Mistakes",
+        "category": "Typo Error",
+        "image": "https://images.unsplash.com/photo-1581392221445-37c88f758fa2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Fusce blandit nisl commodo bibendum tincidunt. In luctus diam non nisi auctor blandit eu in lectus. Nullam ac tristique ante. Morbi euismod imperdiet ex sit amet pellentesque. Nulla suscipit efficitur metus, a tempor nunc pellentesque nec. Etiam mauris leo, dignissim eget neque quis, elementum bibendum nisl. Proin vestibulum eleifend nisl, in bibendum dolor suscipit in. Nulla id nisl lorem.",
+        "readTime": "4 min read",
+        "date": "2025-01-11",
+        "author": "Sarah Williams",
+        "tags": ["Grammar", "Writing"]
+      },
+      {
+        "id": 12,
+        "title": "History of Ancient Artifacts",
+        "category": "Ashes Archives",
+        "image": "https://images.unsplash.com/photo-1524498250077-390f9e378fc0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Fusce blandit nisl commodo bibendum tincidunt. In luctus diam non nisi auctor blandit eu in lectus. Nullam ac tristique ante. Morbi euismod imperdiet ex sit amet pellentesque. Nulla suscipit efficitur metus, a tempor nunc pellentesque nec. Etiam mauris leo, dignissim eget neque quis, elementum bibendum nisl. Proin vestibulum eleifend nisl, in bibendum dolor suscipit in. Nulla id nisl lorem.",
+        "readTime": "6 min read",
+        "date": "2025-01-11",
+        "author": "Lucas Wright",
+        "tags": ["History", "Artifacts"]
+      },
+      {
+        "id": 13,
+        "title": "Ultimate Brain Teasers",
+        "category": "Brain Breakers",
+        "image": "https://images.unsplash.com/photo-1524498250077-390f9e378fc0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Fusce blandit nisl commodo bibendum tincidunt. In luctus diam non nisi auctor blandit eu in lectus. Nullam ac tristique ante. Morbi euismod imperdiet ex sit amet pellentesque. Nulla suscipit efficitur metus, a tempor nunc pellentesque nec. Etiam mauris leo, dignissim eget neque quis, elementum bibendum nisl. Proin vestibulum eleifend nisl, in bibendum dolor suscipit in. Nulla id nisl lorem.",
+        "readTime": "7 min read",
+        "date": "2025-01-11",
+        "author": "Olivia Lee",
+        "tags": ["Puzzles", "Challenge"]
+      },
+      {
+        "id": 14,
+        "title": "Python Programming Cheat Sheet",
+        "category": "Cheat Sheet",
+        "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Fusce blandit nisl commodo bibendum tincidunt. In luctus diam non nisi auctor blandit eu in lectus. Nullam ac tristique ante. Morbi euismod imperdiet ex sit amet pellentesque. Nulla suscipit efficitur metus, a tempor nunc pellentesque nec. Etiam mauris leo, dignissim eget neque quis, elementum bibendum nisl. Proin vestibulum eleifend nisl, in bibendum dolor suscipit in. Nulla id nisl lorem.",
+        "readTime": "2 min read",
+        "date": "2025-01-11",
+        "author": "James Taylor",
+        "tags": ["Python", "Programming"]
+      },
+      {
+        "id": 15,
+        "title": "How to Burp Properly",
+        "category": "Burp Out",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Fusce blandit nisl commodo bibendum tincidunt. In luctus diam non nisi auctor blandit eu in lectus. Nullam ac tristique ante. Morbi euismod imperdiet ex sit amet pellentesque. Nulla suscipit efficitur metus, a tempor nunc pellentesque nec. Etiam mauris leo, dignissim eget neque quis, elementum bibendum nisl. Proin vestibulum eleifend nisl, in bibendum dolor suscipit in. Nulla id nisl lorem.",
+        "readTime": "3 min read",
+        "date": "2025-01-11",
+        "author": "Emily Harris",
+        "tags": ["Health", "Wellness"]
+      },
+      {
+        "id": 16,
+        "title": "Advanced Tarot Techniques",
+        "category": "Tarot Logist",
+        "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Cras sit amet commodo magna, ut aliquam nibh. Curabitur nec tristique mi. Mauris commodo sed orci id egestas. Nulla id felis sit amet dui ullamcorper vulputate in id tellus. Sed molestie enim sit amet ex iaculis faucibus. Nullam sed suscipit nisi. Sed at feugiat leo. Pellentesque urna ipsum, aliquam at tincidunt id, cursus et est. Quisque varius eleifend ligula sed porta. Nam et volutpat sapien, quis egestas nibh.",
+        "readTime": "6 min read",
+        "date": "2025-01-11",
+        "author": "Zara Black",
+        "tags": ["Tarot", "Advanced"]
+      },
+      {
+        "id": 17,
+        "title": "AI and the Future of Automation",
+        "category": "Bookmark",
+        "image": "https://images.unsplash.com/photo-1501800771062-6f9fd730ee69?q=80&w=1854&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Cras sit amet commodo magna, ut aliquam nibh. Curabitur nec tristique mi. Mauris commodo sed orci id egestas. Nulla id felis sit amet dui ullamcorper vulputate in id tellus. Sed molestie enim sit amet ex iaculis faucibus. Nullam sed suscipit nisi. Sed at feugiat leo. Pellentesque urna ipsum, aliquam at tincidunt id, cursus et est. Quisque varius eleifend ligula sed porta. Nam et volutpat sapien, quis egestas nibh.",
+        "readTime": "5 min read",
+        "date": "2025-01-18",
+        "author": "Robert King",
+        "tags": ["AI", "Automation"]
+      },
+      {
+        "id": 18,
+        "title": "Exploring Eco-Friendly Vacations",
+        "category": "Tour Ticket",
+        "image": "https://images.unsplash.com/photo-1574121551426-4761843d4904?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Cras sit amet commodo magna, ut aliquam nibh. Curabitur nec tristique mi. Mauris commodo sed orci id egestas. Nulla id felis sit amet dui ullamcorper vulputate in id tellus. Sed molestie enim sit amet ex iaculis faucibus. Nullam sed suscipit nisi. Sed at feugiat leo. Pellentesque urna ipsum, aliquam at tincidunt id, cursus et est. Quisque varius eleifend ligula sed porta. Nam et volutpat sapien, quis egestas nibh.",
+        "readTime": "4 min read",
+        "date": "2025-01-18",
+        "author": "Amanda Green",
+        "tags": ["Eco-Friendly", "Travel"]
+      },
+      {
+        "id": 19,
+        "title": "Avoiding Common Punctuation Mistakes",
+        "category": "Typo Error",
+        "image": "https://images.unsplash.com/photo-1581392221445-37c88f758fa2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Cras sit amet commodo magna, ut aliquam nibh. Curabitur nec tristique mi. Mauris commodo sed orci id egestas. Nulla id felis sit amet dui ullamcorper vulputate in id tellus. Sed molestie enim sit amet ex iaculis faucibus. Nullam sed suscipit nisi. Sed at feugiat leo. Pellentesque urna ipsum, aliquam at tincidunt id, cursus et est. Quisque varius eleifend ligula sed porta. Nam et volutpat sapien, quis egestas nibh.",
+        "readTime": "5 min read",
+        "date": "2025-01-18",
+        "author": "Tom Foster",
+        "tags": ["Grammar", "Punctuation"]
+      },
+      {
+        "id": 20,
+        "title": "Discovering Lost Artifacts",
+        "category": "Ashes Archives",
+        "image": "https://images.unsplash.com/photo-1524498250077-390f9e378fc0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Cras sit amet commodo magna, ut aliquam nibh. Curabitur nec tristique mi. Mauris commodo sed orci id egestas. Nulla id felis sit amet dui ullamcorper vulputate in id tellus. Sed molestie enim sit amet ex iaculis faucibus. Nullam sed suscipit nisi. Sed at feugiat leo. Pellentesque urna ipsum, aliquam at tincidunt id, cursus et est. Quisque varius eleifend ligula sed porta. Nam et volutpat sapien, quis egestas nibh.",
+        "readTime": "6 min read",
+        "date": "2025-01-18",
+        "author": "Nina Clarke",
+        "tags": ["History", "Artifacts"]
+      },
+      {
+        "id": 21,
+        "title": "Challenging Brain Teasers",
+        "category": "Brain Breakers",
+        "image": "https://images.unsplash.com/photo-1524498250077-390f9e378fc0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Cras sit amet commodo magna, ut aliquam nibh. Curabitur nec tristique mi. Mauris commodo sed orci id egestas. Nulla id felis sit amet dui ullamcorper vulputate in id tellus. Sed molestie enim sit amet ex iaculis faucibus. Nullam sed suscipit nisi. Sed at feugiat leo. Pellentesque urna ipsum, aliquam at tincidunt id, cursus et est. Quisque varius eleifend ligula sed porta. Nam et volutpat sapien, quis egestas nibh.",
+        "readTime": "7 min read",
+        "date": "2025-01-18",
+        "author": "Rachel Gray",
+        "tags": ["Puzzles", "Brain Teasers"]
+      },
+      {
+        "id": 22,
+        "title": "Cheat Sheet for Data Science",
+        "category": "Cheat Sheet",
+        "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Curabitur vitae egestas dolor, non blandit turpis. Integer tempus nunc non euismod maximus. Ut ac tincidunt leo. Vestibulum in sem euismod, gravida magna pellentesque, aliquam quam. Donec dignissim metus in tincidunt efficitur. Fusce eu pellentesque justo. Vestibulum at auctor nulla, quis vulputate nisl. Ut fermentum condimentum ultricies. Donec sit amet libero sit amet metus molestie finibus vitae ac arcu.",
+        "readTime": "4 min read",
+        "date": "2025-01-18",
+        "author": "Henry Cole",
+        "tags": ["Data Science", "Programming"]
+      },
+      {
+        "id": 23,
+        "title": "Secrets of Healthy Burping",
+        "category": "Burp Out",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Curabitur vitae egestas dolor, non blandit turpis. Integer tempus nunc non euismod maximus. Ut ac tincidunt leo. Vestibulum in sem euismod, gravida magna pellentesque, aliquam quam. Donec dignissim metus in tincidunt efficitur. Fusce eu pellentesque justo. Vestibulum at auctor nulla, quis vulputate nisl. Ut fermentum condimentum ultricies. Donec sit amet libero sit amet metus molestie finibus vitae ac arcu.",
+        "readTime": "3 min read",
+        "date": "2025-01-18",
+        "author": "Laura Allen",
+        "tags": ["Health", "Wellness"]
+      },
+      {
+        "id": 24,
+        "title": "Understanding Tarot Readings",
+        "category": "Tarot Logist",
+        "image": "https://images.unsplash.com/photo-1736604970225-2633e0739d17?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "excerpt": "Curabitur vitae egestas dolor, non blandit turpis. Integer tempus nunc non euismod maximus. Ut ac tincidunt leo. Vestibulum in sem euismod, gravida magna pellentesque, aliquam quam. Donec dignissim metus in tincidunt efficitur. Fusce eu pellentesque justo. Vestibulum at auctor nulla, quis vulputate nisl. Ut fermentum condimentum ultricies. Donec sit amet libero sit amet metus molestie finibus vitae ac arcu.",
+        "readTime": "5 min read",
+        "date": "2025-01-18",
+        "author": "Sophie Mitchell",
+        "tags": ["Tarot", "Spirituality"]
+      }
+    ]
+  }
+  
