@@ -1,21 +1,21 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import VirtualMagazine from './components/VirtualMagazine';
-import ArticleDetail from './components/ArticleDetail'; // Ensure this path is correct
+import Login from './auth/Login';
+import Register from './auth/Register';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <Router>
-      <div className="app">
+    <AuthProvider>
+      <Router>
         <Routes>
-          {/* Route to VirtualMagazine */}
           <Route path="/" element={<VirtualMagazine />} />
-
-          {/* Route to ArticleDetail */}
-          <Route path="/article/:id" element={<ArticleDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ChevronLeft, ChevronRight, BookOpen, Search, Heart, Share2, Bookmark } from 'lucide-react';
 import CategoryFilter from './CategoryFilter';
 import EditionCatalog from './EditionCatalog';
 import FeaturedArticle from './FeaturedArticle';
 import articlesData from './articles.json';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const VirtualMagazine = () => {
-  // State management with initial data from JSON
   const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,20 +16,18 @@ const VirtualMagazine = () => {
   const [likedArticles, setLikedArticles] = useState([]);
   const itemsPerPage = 8;
   const navigate = useNavigate();
+  const { isAuthenticated, login, logout } = useContext(AuthContext);
+
   const handleReadMore = (article) => {
     navigate(`/article/${article.id}`);
   };
-  
 
-  // Load articles from JSON file
   useEffect(() => {
     setArticles(articlesData.articles);
   }, []);
 
-  // Get unique categories from articles
   const categories = [...new Set(articles.map(article => article.category))];
 
-  // Filter and search articles
   const filteredArticles = articles.filter(article => {
     const matchesCategory = !activeCategory || article.category === activeCategory;
     const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -37,14 +35,12 @@ const VirtualMagazine = () => {
     return matchesCategory && matchesSearch;
   });
 
-  // Pagination
   const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
   const currentArticles = filteredArticles.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Existing functions
   const toggleSave = (articleId) => {
     setSavedArticles(prev => 
       prev.includes(articleId) 
@@ -73,7 +69,6 @@ const VirtualMagazine = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
@@ -92,38 +87,48 @@ const VirtualMagazine = () => {
                 />
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Subscribe
+              <button
+                onClick={() => navigate('/register')} // Redirect to the Register page
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Register
               </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Login
-              </button>
+              {isAuthenticated ? (
+                <button 
+                  onClick={logout}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Logout
+                </button>
+              ) : (
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Login
+                </button>
+              )}
             </div>
           </div>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-6">
-        {/* Category Filter */}
         <CategoryFilter 
           categories={categories}
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
         />
 
-        {/* Featured Article */}
         {articles.length > 0 && <FeaturedArticle articles={articles} interval={5000} />}
 
-        {/* Three Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Edition Catalog */}
           <div className="lg:col-span-3">
             <div className="sticky top-4">
               <EditionCatalog articles={articles} />
             </div>
           </div>
 
-          {/* Main Articles */}
           <div className="lg:col-span-6 space-y-6">
             {currentArticles.length > 0 ? (
               currentArticles.map(article => (
@@ -185,7 +190,6 @@ const VirtualMagazine = () => {
               </div>
             )}
 
-            {/* Pagination */}
             {currentArticles.length > 0 && (
               <div className="flex justify-center items-center space-x-4 mt-8">
                 <button 
@@ -209,7 +213,6 @@ const VirtualMagazine = () => {
             )}
           </div>
 
-          {/* Saved Articles */}
           <div className="lg:col-span-3">
             <div className="sticky top-4">
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
