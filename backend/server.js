@@ -5,10 +5,11 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 5173;
+const PORT = 5000;
 
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors({ origin: 'http://localhost:5173' })); // Allow frontend origin
+app.use(bodyParser.json()); // Parse JSON bodies
+app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 // Load users from users.json
 const usersFilePath = path.join(__dirname, 'users.json');

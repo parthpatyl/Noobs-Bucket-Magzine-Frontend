@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ const Register = () => {
     }
     const result = await register(email, password); // Use the register function from AuthContext
     if (result.success) {
-      navigate('/login'); // Redirect to the login page after successful registration
+      navigate('/auth/login'); // Redirect to the login page after successful registration
     } else {
       alert(result.message || 'Registration failed'); // Show error message
     }
@@ -63,7 +63,7 @@ const Register = () => {
           </button>
         </form>
         <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
-          Already have an account? <a href="/login" className="text-blue-600">Login</a>
+          Already have an account? <a href="/auth/login" className="text-blue-600">Login</a>
         </p>
       </div>
     </div>

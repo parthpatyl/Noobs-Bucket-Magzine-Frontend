@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import VirtualMagazine from './components/VirtualMagazine';
-import Login from './auth/Login';
-import Register from './auth/Register';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import { AuthProvider } from './context/AuthContext';
+import UserProfile from './components/UserProfile'; // Create this component
 
 function App() {
   return (
@@ -11,8 +12,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<VirtualMagazine />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/auth/login" element={<Login />} />
+          <Route path="/auth/register" element={<Register />} />
+          <Route path="/user/:id" element={<UserProfile />} />
         </Routes>
       </Router>
     </AuthProvider>

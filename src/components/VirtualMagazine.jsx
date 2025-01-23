@@ -16,7 +16,7 @@ const VirtualMagazine = () => {
   const [likedArticles, setLikedArticles] = useState([]);
   const itemsPerPage = 8;
   const navigate = useNavigate();
-  const { isAuthenticated, login, logout } = useContext(AuthContext);
+  const { isAuthenticated, user, login, logout, updateUser } = useContext(AuthContext);
 
   const handleReadMore = (article) => {
     navigate(`/article/${article.id}`);
@@ -31,7 +31,7 @@ const VirtualMagazine = () => {
   const filteredArticles = articles.filter(article => {
     const matchesCategory = !activeCategory || article.category === activeCategory;
     const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+      article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -41,20 +41,28 @@ const VirtualMagazine = () => {
     currentPage * itemsPerPage
   );
 
-  const toggleSave = (articleId) => {
-    setSavedArticles(prev => 
-      prev.includes(articleId) 
-        ? prev.filter(id => id !== articleId)
-        : [...prev, articleId]
-    );
+  const toggleSave = async (articleId) => {
+    const newSaved = savedArticles.includes(articleId)
+      ? savedArticles.filter(id => id !== articleId)
+      : [...savedArticles, articleId];
+
+    setSavedArticles(newSaved);
+
+    if (user) {
+      await updateUser(user.id, { savedArticles: newSaved });
+    }
   };
 
-  const toggleLike = (articleId) => {
-    setLikedArticles(prev => 
-      prev.includes(articleId) 
-        ? prev.filter(id => id !== articleId)
-        : [...prev, articleId]
-    );
+  const toggleLike = async (articleId) => {
+    const newLiked = likedArticles.includes(articleId)
+      ? likedArticles.filter(id => id !== articleId)
+      : [...likedArticles, articleId];
+
+    setLikedArticles(newLiked);
+
+    if (user) {
+      await updateUser(user.id, { likedArticles: newLiked });
+    }
   };
 
   const shareArticle = (article) => {
@@ -74,7 +82,7 @@ const VirtualMagazine = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <BookOpen className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Noobs Bucket</h1>
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Basket</h1>
             </div>
             <div className="flex items-center space-x-4">
               <div className="relative">
@@ -87,26 +95,36 @@ const VirtualMagazine = () => {
                 />
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
-              <button
-                onClick={() => navigate('/register')} // Redirect to the Register page
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Register
-              </button>
               {isAuthenticated ? (
-                <button 
-                  onClick={logout}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Logout
-                </button>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => navigate(`/user/${user.id}`)}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  >
+                    Profile
+                  </button>
+                  <button
+                    onClick={logout}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  >
+                    Logout
+                  </button>
+                </div>
               ) : (
-                <button 
-                  onClick={() => navigate('/login')}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Login
-                </button>
+                <>
+                  <button
+                    onClick={() => navigate('/auth/register')}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Register
+                  </button>
+                  <button
+                    onClick={() => navigate('/auth/login')}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Login
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -114,7 +132,7 @@ const VirtualMagazine = () => {
       </header>
 
       <div className="container mx-auto px-4 py-6">
-        <CategoryFilter 
+        <CategoryFilter
           categories={categories}
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
@@ -147,23 +165,21 @@ const VirtualMagazine = () => {
                         <h3 className="text-xl font-bold dark:text-white mt-2">{article.title}</h3>
                       </div>
                       <div className="flex space-x-2">
-                        <button 
+                        <button
                           onClick={() => toggleLike(article.id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                            likedArticles.includes(article.id) ? 'text-red-500' : 'text-gray-500'
-                          }`}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${likedArticles.includes(article.id) ? 'text-red-500' : 'text-gray-500'
+                            }`}
                         >
                           <Heart className="h-5 w-5" fill={likedArticles.includes(article.id) ? "currentColor" : "none"} />
                         </button>
-                        <button 
+                        <button
                           onClick={() => toggleSave(article.id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                            savedArticles.includes(article.id) ? 'text-blue-500' : 'text-gray-500'
-                          }`}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${savedArticles.includes(article.id) ? 'text-blue-500' : 'text-gray-500'
+                            }`}
                         >
                           <Bookmark className="h-5 w-5" fill={savedArticles.includes(article.id) ? "currentColor" : "none"} />
                         </button>
-                        <button 
+                        <button
                           onClick={() => shareArticle(article)}
                           className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500">
                           <Share2 className="h-5 w-5" /></button>
@@ -175,13 +191,13 @@ const VirtualMagazine = () => {
                         <span className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</span>
                         <span className="text-sm text-gray-500 dark:text-gray-400">{article.date}</span>
                       </div>
-                      <button 
-                      onClick={() => handleReadMore(article)}
-                      className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300">
-                      Read More →
-                    </button>
+                      <button
+                        onClick={() => handleReadMore(article)}
+                        className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300">
+                        Read More →
+                      </button>
+                    </div>
                   </div>
-                </div>
                 </div>
               ))
             ) : (
@@ -192,7 +208,7 @@ const VirtualMagazine = () => {
 
             {currentArticles.length > 0 && (
               <div className="flex justify-center items-center space-x-4 mt-8">
-                <button 
+                <button
                   className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
@@ -202,7 +218,7 @@ const VirtualMagazine = () => {
                 <span className="text-lg font-semibold dark:text-white">
                   Page {currentPage} of {totalPages}
                 </span>
-                <button 
+                <button
                   className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
@@ -224,7 +240,7 @@ const VirtualMagazine = () => {
                       <h4 className="font-medium dark:text-white">{article.title}</h4>
                       <div className="flex justify-between items-center mt-2">
                         <p className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</p>
-                        <button 
+                        <button
                           onClick={() => toggleSave(article.id)}
                           className="text-blue-500"
                         >

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +12,7 @@ const Login = () => {
     e.preventDefault();
     const result = await login(email, password);
     if (result.success) {
-      navigate('/');
+      navigate(`/user/${result.user.id}`); // Redirect to user profile
     } else {
       alert(result.message || 'Login failed');
     }
@@ -48,7 +48,7 @@ const Login = () => {
           </button>
         </form>
         <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
-          Don't have an account? <a href="/register" className="text-blue-600">Register</a>
+          Don't have an account? <a href="/auth/register" className="text-blue-600">Register</a>
         </p>
       </div>
     </div>
