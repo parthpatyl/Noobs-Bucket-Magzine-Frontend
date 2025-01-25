@@ -1,0 +1,37 @@
+c:/Users/parth/OneDrive/Desktop/codebase/noobsbucket/
+├── .gitignore
+├── ArticleCUD.html
+├── backend/
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── routes/
+│   │   └── auth.js
+│   ├── server.js
+│   └── users.json
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── public/
+│   └── vite.svg
+├── src/
+│   ├── App.css
+│   ├── App.jsx
+│   ├── components/
+│   │   ├── ArticleDetail.jsx
+│   │   ├── articles.json
+│   │   ├── auth/
+│   │   │   ├── Login.jsx
+│   │   │   └── Register.jsx
+│   │   ├── CategoryFilter.jsx
+│   │   ├── EditionCatalog.jsx
+│   │   ├── FeaturedArticle.jsx
+│   │   ├── UserProfile.jsx
+│   │   └── VirtualMagazine.jsx
+│   ├── context/
+│   │   └── AuthContext.jsx
+│   ├── index.css
+│   └── main.jsx
+├── tailwind.config.js
+└── vite.config.js

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -11,15 +12,18 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
-    const result = await register(email, password); // Use the register function from AuthContext
-    if (result.success) {
-      navigate('/auth/login'); // Redirect to the login page after successful registration
-    } else {
-      alert(result.message || 'Registration failed'); // Show error message
+    try {
+      if (password !== confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+      const result = await register(email, password);
+      if (result.success) {
+        navigate('/auth/login');
+      } else {
+        alert(result.message || 'Registration failed');
+      }
+    } catch (error) {
+      alert(error.message || 'An error occurred');
     }
   };
 
@@ -63,7 +67,7 @@ const Register = () => {
           </button>
         </form>
         <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
-          Already have an account? <a href="/auth/login" className="text-blue-600">Login</a>
+          Already have an account? <Link to="/auth/login" className="text-blue-600">Login</Link>
         </p>
       </div>
     </div>

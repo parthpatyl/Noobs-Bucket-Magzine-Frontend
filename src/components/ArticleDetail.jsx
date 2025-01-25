@@ -1,16 +1,46 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import articlesData from "./articles.json";
 import { ArrowLeft, Heart, Share2, Bookmark } from "lucide-react";
+import articlesData from "./articles.json";
+import { AuthContext } from "../context/AuthContext";
 
 const ArticleDetail = () => {
-  const { id } = useParams(); // Extract ID from route params
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { user, updateUser } = useContext(AuthContext);
 
-  // Find the article with a matching ID (ensure type consistency)
   const article = articlesData.articles.find(
-    (article) => article.id === parseInt(id)
+    (article) => article.id === Number(id)
   );
+
+  const isSaved = user?.savedArticles?.includes(article?.id);
+  const isLiked = user?.likedArticles?.includes(article?.id);
+
+  const toggleSave = async () => {
+    if (!user || !article) return;
+    const newSaved = isSaved
+      ? user.savedArticles.filter((id) => id !== article.id)
+      : [...(user.savedArticles || []), article.id];
+    await updateUser(user.id, { savedArticles: newSaved });
+  };
+
+  const toggleLike = async () => {
+    if (!user || !article) return;
+    const newLiked = isLiked
+      ? user.likedArticles.filter((id) => id !== article.id)
+      : [...(user.likedArticles || []), article.id];
+    await updateUser(user.id, { likedArticles: newLiked });
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: article.title,
+        text: article.excerpt,
+        url: window.location.href,
+      });
+    }
+  };
 
   if (!article) {
     return (
@@ -58,16 +88,25 @@ const ArticleDetail = () => {
                 <span>{article.readTime}</span>
               </div>
               <div className="flex space-x-4">
-                <button 
-                onClick={() => toggleLike(article.id)}
-                className={'p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700'}>
-                  <Heart className="h-5 w-5 text-gray-500" />
+                <button
+                  onClick={toggleLike}
+                  className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isLiked ? 'text-red-500' : 'text-gray-500'
+                    }`}
+                >
+                  <Heart className="h-5 w-5" fill={isLiked ? 'currentColor' : 'none'} />
                 </button>
-                <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <Bookmark className="h-5 w-5 text-gray-500" />
+                <button
+                  onClick={toggleSave}
+                  className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isSaved ? 'text-blue-500' : 'text-gray-500'
+                    }`}
+                >
+                  <Bookmark className="h-5 w-5" fill={isSaved ? 'currentColor' : 'none'} />
                 </button>
-                <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <Share2 className="h-5 w-5 text-gray-500" />
+                <button
+                  onClick={handleShare}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                >
+                  <Share2 className="h-5 w-5" />
                 </button>
               </div>
             </div>

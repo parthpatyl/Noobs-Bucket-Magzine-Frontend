@@ -26,6 +26,13 @@ const VirtualMagazine = () => {
     setArticles(articlesData.articles);
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      setSavedArticles(user.savedArticles || []);
+      setLikedArticles(user.likedArticles || []);
+    }
+  }, [user]);
+
   const categories = [...new Set(articles.map(article => article.category))];
 
   const filteredArticles = articles.filter(article => {
@@ -41,28 +48,26 @@ const VirtualMagazine = () => {
     currentPage * itemsPerPage
   );
 
+
   const toggleSave = async (articleId) => {
+    if (!user) return;
     const newSaved = savedArticles.includes(articleId)
       ? savedArticles.filter(id => id !== articleId)
       : [...savedArticles, articleId];
-
+  
     setSavedArticles(newSaved);
-
-    if (user) {
-      await updateUser(user.id, { savedArticles: newSaved });
-    }
+    await updateUser(user.id, { savedArticles: newSaved }); // Ensure await
   };
 
   const toggleLike = async (articleId) => {
+    if (!user) return; // Add guard clause
+  
     const newLiked = likedArticles.includes(articleId)
       ? likedArticles.filter(id => id !== articleId)
       : [...likedArticles, articleId];
-
-    setLikedArticles(newLiked);
-
-    if (user) {
-      await updateUser(user.id, { likedArticles: newLiked });
-    }
+  
+    setLikedArticles(newSaved);
+    await updateUser(user.id, { likedArticles: newLiked }); // Ensure await
   };
 
   const shareArticle = (article) => {
@@ -82,7 +87,7 @@ const VirtualMagazine = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <BookOpen className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Basket</h1>
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Noob's Bucket</h1>
             </div>
             <div className="flex items-center space-x-4">
               <div className="relative">
@@ -99,7 +104,7 @@ const VirtualMagazine = () => {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => navigate(`/user/${user.id}`)}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
                     Profile
                   </button>

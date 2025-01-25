@@ -1,15 +1,8 @@
 [
   {
-    "id": 1,
-    "email": "user@example.com",
-    "password": "password123",
-    "savedArticles": [],
-    "likedArticles": []
-  },
-  {
-    "id": 2,
-    "email": "parth@gmail.com",
-    "password": "password123",
+    "id": "b23f6e3b-98be-413a-b27a-27ae20b06e8d",
+    "email": "parthpatyl@gmail.com",
+    "password": "aaaa",
     "savedArticles": [],
     "likedArticles": []
   }

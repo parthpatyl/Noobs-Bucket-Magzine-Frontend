@@ -7,13 +7,15 @@ const path = require('path');
 const app = express();
 const PORT = 5000;
 
-app.use(cors({ origin: 'http://localhost:5173' })); // Allow frontend origin
+app.use(cors({ origin: 'http://localhost:5176' }));
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 // Load users from users.json
 const usersFilePath = path.join(__dirname, 'users.json');
+delete require.cache[usersFilePath];
 let users = require(usersFilePath);
+
 
 // Save users to users.json
 const saveUsers = () => {

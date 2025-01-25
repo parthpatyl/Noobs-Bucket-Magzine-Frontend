@@ -8,6 +8,32 @@ export const AuthProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
+  const register = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:5000/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed');
+      }
+  
+      if (data.success) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setUser(data.user);
+      }
+      return data;
+    } catch (error) {
+      console.error('Registration error:', error);
+      return { success: false, message: error.message };
+    }
+  };
+  
+  // Update login function
   const login = async (email, password) => {
     try {
       const response = await fetch('http://localhost:5000/auth/login', {
@@ -15,7 +41,13 @@ export const AuthProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
+  
       const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+  
       if (data.success) {
         localStorage.setItem('user', JSON.stringify(data.user));
         setUser(data.user);
@@ -23,24 +55,10 @@ export const AuthProvider = ({ children }) => {
       return data;
     } catch (error) {
       console.error('Login error:', error);
-      return { success: false, message: 'Connection error' };
+      return { success: false, message: error.message };
     }
   };
-
-  const register = async (email, password) => {
-    const response = await fetch('http://localhost:5000/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
-    if (data.success) {
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
-    }
-    return data;
-  };
-
+  
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);
