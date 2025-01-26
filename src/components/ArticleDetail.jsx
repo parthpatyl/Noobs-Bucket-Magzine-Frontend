@@ -47,7 +47,7 @@ const ArticleDetail = () => {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold">Article not found</h1>
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/magazine")}
           className="mt-4 flex items-center text-blue-600 hover:text-blue-800"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
@@ -61,7 +61,7 @@ const ArticleDetail = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/magazine")}
           className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />

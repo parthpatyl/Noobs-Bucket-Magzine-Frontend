@@ -7,7 +7,7 @@ const path = require('path');
 const app = express();
 const PORT = 5000;
 
-app.use(cors({ origin: 'http://localhost:5176' }));
+app.use(cors({ origin: 'http://localhost:5177' }));
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 

@@ -8,12 +8,12 @@ export const AuthProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  const register = async (email, password) => {
+  const register = async (name, email, password) => {
     try {
       const response = await fetch('http://localhost:5000/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
   
       const data = await response.json();
@@ -23,7 +23,10 @@ export const AuthProvider = ({ children }) => {
       }
   
       if (data.success) {
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('user', JSON.stringify({
+          ...data.user,
+          memberSince: data.user.memberSince // Ensure this is included
+        }));
         setUser(data.user);
       }
       return data;
@@ -49,7 +52,10 @@ export const AuthProvider = ({ children }) => {
       }
   
       if (data.success) {
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('user', JSON.stringify({
+          ...data.user,
+          memberSince: data.user.memberSince // Ensure this is included
+        }));
         setUser(data.user);
       }
       return data;

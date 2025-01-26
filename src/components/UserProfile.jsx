@@ -50,16 +50,16 @@ const UserProfile = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-          {/* Previous Profile Header code remains the same */}
+          {/* Profile Header */}
           <div className="bg-blue-600 p-6">
             <div className="flex items-center gap-6">
               <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center">
                 <span className="text-2xl font-bold text-blue-600">
-                  {user.email[0].toUpperCase()}
+                  {user.name[0].toUpperCase()} {/* Use the first letter of the name */}
                 </span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Your Profile</h1>
+                <h1 className="text-2xl font-bold text-white">{user.name}</h1> {/* Display the user's name */}
                 <p className="text-blue-100">{user.email}</p>
               </div>
             </div>
@@ -144,12 +144,16 @@ const UserProfile = () => {
             </div>
           </div>
 
-          {/* Previous Account Details and Action Buttons remain the same */}
+          {/* Account Details Section */}
           <div className="p-6 border-t border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-semibold mb-4 dark:text-white">
               Account Details
             </h2>
             <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 dark:text-gray-300">Name:</span>
+                <span className="font-medium dark:text-white">{user.name}</span> {/* Display name */}
+              </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 dark:text-gray-300">Email:</span>
                 <span className="font-medium dark:text-white">{user.email}</span>
@@ -157,15 +161,20 @@ const UserProfile = () => {
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 dark:text-gray-300">Member Since:</span>
                 <span className="font-medium dark:text-white">
-                  {new Date().toLocaleDateString()}
+                  {new Date(user.memberSince).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
                 </span>
               </div>
             </div>
           </div>
 
+          {/* Action Buttons */}
           <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-4">
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/magazine")}
               className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
             >
               Back to Articles

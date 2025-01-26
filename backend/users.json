@@ -1,9 +1,15 @@
 [
   {
-    "id": "b23f6e3b-98be-413a-b27a-27ae20b06e8d",
+    "id": "2ab59007-133b-47ba-a6fe-7f021bca3055",
+    "name": "Parth Nilamkumar Patil",
     "email": "parthpatyl@gmail.com",
     "password": "aaaa",
-    "savedArticles": [],
-    "likedArticles": []
+    "memberSince": "Sun, 26 Jan 2025 18:25:28 GMT",
+    "savedArticles": [
+      1
+    ],
+    "likedArticles": [
+      1
+    ]
   }
 ]

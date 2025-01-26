@@ -7,16 +7,17 @@ import articlesData from './articles.json';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-const VirtualMagazine = () => {
+const MagazinePage = () => {
   const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState(null);
   const [savedArticles, setSavedArticles] = useState([]);
   const [likedArticles, setLikedArticles] = useState([]);
+  const [isEditionMinimized, setIsEditionMinimized] = useState(false);
   const itemsPerPage = 8;
   const navigate = useNavigate();
-  const { isAuthenticated, user, login, logout, updateUser } = useContext(AuthContext);
+  const { isAuthenticated, user, logout, updateUser } = useContext(AuthContext);
 
   const handleReadMore = (article) => {
     navigate(`/article/${article.id}`);
@@ -48,25 +49,24 @@ const VirtualMagazine = () => {
     currentPage * itemsPerPage
   );
 
-
   const toggleSave = async (articleId) => {
     if (!user) return;
     const newSaved = savedArticles.includes(articleId)
       ? savedArticles.filter(id => id !== articleId)
       : [...savedArticles, articleId];
-  
+
     setSavedArticles(newSaved);
     await updateUser(user.id, { savedArticles: newSaved }); // Ensure await
   };
 
   const toggleLike = async (articleId) => {
     if (!user) return; // Add guard clause
-  
+
     const newLiked = likedArticles.includes(articleId)
       ? likedArticles.filter(id => id !== articleId)
       : [...likedArticles, articleId];
-  
-    setLikedArticles(newSaved);
+
+    setLikedArticles(newLiked); // Fix: Use newLiked instead of newSaved
     await updateUser(user.id, { likedArticles: newLiked }); // Ensure await
   };
 
@@ -148,7 +148,11 @@ const VirtualMagazine = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-3">
             <div className="sticky top-4">
-              <EditionCatalog articles={articles} />
+              <EditionCatalog
+                articles={articles}
+                isMinimized={isEditionMinimized}
+                onToggleMinimize={() => setIsEditionMinimized(!isEditionMinimized)}
+              />
             </div>
           </div>
 
@@ -263,4 +267,4 @@ const VirtualMagazine = () => {
   );
 };
 
-export default VirtualMagazine;
+export default MagazinePage;

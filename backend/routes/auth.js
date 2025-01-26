@@ -8,7 +8,7 @@ const usersFilePath = path.join(__dirname, '../users.json');
 let users = require(usersFilePath);
 
 router.post('/register', (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
   
   if (users.some(u => u.email === email)) {
     return res.status(400).json({ 
@@ -20,8 +20,10 @@ router.post('/register', (req, res) => {
 
   const newUser = {
     id: uuidv4(),
+    name,
     email,
     password,
+    memberSince: new Date().toUTCString(),
     savedArticles: [],
     likedArticles: []
   };
@@ -55,7 +57,6 @@ router.put('/user/:userId', (req, res) => {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
-  // Merge updates while preserving existing array structures
   const updatedUser = {
     ...users[userIndex],
     ...updates,
