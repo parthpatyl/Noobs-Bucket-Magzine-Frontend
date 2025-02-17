@@ -28,11 +28,11 @@ const TimelineNav = ({ articles, isMinimized, onToggleMinimize }) => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <Calendar className="h-5 w-5 text-blue-600" />
-          <h3 className="text-lg font-semibold dark:text-white">Edition Timeline</h3>
+          <h3 className="text-lg font-bold dark:text-white">Edition Timeline</h3>
         </div>
         <button 
           onClick={onToggleMinimize}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-blue-700 rounded-lg transition-colors"
         >
           {isMinimized ? (
             <ChevronDown className="h-5 w-5 text-gray-600 dark:text-gray-300" />
@@ -53,7 +53,7 @@ const TimelineNav = ({ articles, isMinimized, onToggleMinimize }) => {
                 key={dateStr}
                 className={`relative pl-6 pb-4 border-l-2 ${
                   hasArticles 
-                    ? 'border-gray-300 hover:border-blue-400 cursor-pointer' 
+                    ? 'border-gray-300 hover:border-blue-600 cursor-pointer' 
                     : 'border-gray-200'
                 }`}
                 onClick={() => hasArticles && handleDateClick(dateStr)}

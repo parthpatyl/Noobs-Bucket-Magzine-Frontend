@@ -1,34 +1,48 @@
-c:/Users/parth/OneDrive/Desktop/codebase/noobsbucket/
+c:/Users/parth/OneDrive/Desktop/codebase/virtual magazine/
 ├── .gitignore
 ├── ArticleCUD.html
 ├── backend/
+│   ├── .env
+│   ├── articleRoutes.js
+│   ├── models/
+│   │   └── Article.js
+│   ├── node_modules/
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── routes/
+│   │   ├── articleRoutes.js
 │   │   └── auth.js
 │   ├── server.js
 │   └── users.json
 ├── eslint.config.js
+├── File Structure.txt
 ├── index.html
+├─] node_modules/ (ignored)
 ├── package-lock.json
 ├── package.json
 ├── postcss.config.js
 ├── public/
 │   └── vite.svg
+├── README.md
 ├── src/
 │   ├── App.css
 │   ├── App.jsx
+│   ├── assets/
+│   │   └── react.svg
 │   ├── components/
 │   │   ├── ArticleDetail.jsx
+│   │   ├── ArticlePage.jsx
 │   │   ├── articles.json
 │   │   ├── auth/
 │   │   │   ├── Login.jsx
 │   │   │   └── Register.jsx
 │   │   ├── CategoryFilter.jsx
 │   │   ├── EditionCatalog.jsx
+│   │   ├── EditionPage.jsx
 │   │   ├── FeaturedArticle.jsx
-│   │   ├── UserProfile.jsx
-│   │   └── VirtualMagazine.jsx
+│   │   ├── LandingPage.jsx
+│   │   ├── MagazinePage.jsx
+│   │   └── UserProfile.jsx
 │   ├── context/
 │   │   └── AuthContext.jsx
 │   ├── index.css

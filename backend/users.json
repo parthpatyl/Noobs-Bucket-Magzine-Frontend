@@ -11,5 +11,23 @@
     "likedArticles": [
       1
     ]
+  },
+  {
+    "id": "badfa35f-ad92-4af3-a99a-3b3650565f7d",
+    "name": "parth",
+    "email": "parth@gm.com",
+    "password": "aaaaa",
+    "memberSince": "Thu, 13 Feb 2025 16:56:21 GMT",
+    "savedArticles": [],
+    "likedArticles": []
+  },
+  {
+    "id": "63b017aa-b016-46b9-a4d2-bee375fa3ef7",
+    "name": "parth",
+    "email": "parth@gmail.com",
+    "password": "aaaaa",
+    "memberSince": "Thu, 13 Feb 2025 16:57:30 GMT",
+    "savedArticles": [],
+    "likedArticles": []
   }
 ]
