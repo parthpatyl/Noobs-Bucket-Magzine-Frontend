@@ -3,49 +3,55 @@ const router = express.Router();
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs'); // File system module
+const User = require('../models/User');
+const bcrypt = require('bcrypt');
 
 const usersFilePath = path.join(__dirname, '../users.json');
 let users = require(usersFilePath);
 
-router.post('/register', (req, res) => {
+router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
-  
-  if (users.some(u => u.email === email)) {
-    return res.status(400).json({ 
-      success: false, 
-      message: "User already exists",
-      user: null 
+  console.log(name, email, password);
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "User already exists" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
     });
+    await newUser.save();
+    return res.status(201).json({ success: true, message: "User Created Successfully" });
+  } catch (error) {
+    console.error("Internal Server Error", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
-
-  const newUser = {
-    id: uuidv4(),
-    name,
-    email,
-    password,
-    memberSince: new Date().toUTCString(),
-    savedArticles: [],
-    likedArticles: []
-  };
-
-  users.push(newUser);
-  fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2));
-  
-  res.json({ 
-    success: true,
-    user: newUser 
-  });
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', async(req, res) => {
   const { email, password } = req.body;
-  const user = users.find(u => u.email === email && u.password === password);
-
-  if (!user) {
-    return res.status(401).json({ success: false, message: "Invalid credentials" });
+  console.log(email, password);
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(200).json({ success: false, message: "User Does not Exists" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }else{
+      return res.status(201).json({ success: true, message: "User Logged in Successfully", data:user });
+    }
+    
+  } catch (error) {
+    console.error("Internal Server Error", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 
-  res.json({ success: true, user });
 });
 
 router.put('/user/:userId', (req, res) => {
