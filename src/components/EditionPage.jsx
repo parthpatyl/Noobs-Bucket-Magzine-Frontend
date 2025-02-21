@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
-import articlesData from './articles.json';
 
 const EditionPage = () => {
   const { date } = useParams();

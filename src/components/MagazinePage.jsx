@@ -3,9 +3,10 @@ import { ChevronLeft, ChevronRight, BookOpen, Search, Heart, Share2, Bookmark } 
 import CategoryFilter from './CategoryFilter';
 import EditionCatalog from './EditionCatalog';
 import FeaturedArticle from './FeaturedArticle';
-import articlesData from './articles.json';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+
+const API_BASE_URL = "http://localhost:5000";
 
 const MagazinePage = () => {
   const [articles, setArticles] = useState([]);
@@ -20,11 +21,14 @@ const MagazinePage = () => {
   const { isAuthenticated, user, logout, updateUser } = useContext(AuthContext);
 
   const handleReadMore = (article) => {
-    navigate(`/article/${article.id}`);
+    navigate(`/article/${article._id}`);
   };
 
   useEffect(() => {
-    setArticles(articlesData.articles);
+    fetch(`${API_BASE_URL}/api/articles`)
+      .then((res) => res.json())
+      .then((data) => setArticles(data))
+      .catch((error) => console.error("Error fetching articles:", error));
   }, []);
 
   useEffect(() => {
@@ -56,7 +60,7 @@ const MagazinePage = () => {
       : [...savedArticles, articleId];
 
     setSavedArticles(newSaved);
-    await updateUser(user.id, { savedArticles: newSaved }); // Ensure await
+    await updateUser(user._id, { savedArticles: newSaved }); // Ensure await
   };
 
   const toggleLike = async (articleId) => {
@@ -67,7 +71,7 @@ const MagazinePage = () => {
       : [...likedArticles, articleId];
 
     setLikedArticles(newLiked); // Fix: Use newLiked instead of newSaved
-    await updateUser(user.id, { likedArticles: newLiked }); // Ensure await
+    await updateUser(user._id, { likedArticles: newLiked }); // Ensure await
   };
 
   const shareArticle = (article) => {

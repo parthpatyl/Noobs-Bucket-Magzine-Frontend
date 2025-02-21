@@ -14,7 +14,7 @@ const Login = () => {
     try {
       const result = await login(email, password);
       if (result.success) {
-        navigate(`/user/${result.user.id}`);
+        navigate(`/user/${result.user._id}`);
       } else {
         alert(result.message || 'Login failed');
       }

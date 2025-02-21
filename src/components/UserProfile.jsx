@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import articlesData from './articles.json';
 
 const UserProfile = () => {
   const { id } = useParams();
