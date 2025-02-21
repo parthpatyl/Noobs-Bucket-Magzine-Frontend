@@ -5,8 +5,8 @@ import EditionCatalog from './EditionCatalog';
 import FeaturedArticle from './FeaturedArticle';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { API_BASE_URL } from '../utils/api';
 
-const API_BASE_URL = "http://localhost:5000";
 
 const MagazinePage = () => {
   const [articles, setArticles] = useState([]);
@@ -23,12 +23,27 @@ const MagazinePage = () => {
   const handleReadMore = (article) => {
     navigate(`/article/${article._id}`);
   };
+  const fetchArticles = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/articles`);
+      const data = await response.json();
+      console.log(data);
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch articles');
+      }
+      setArticles(data);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+    }
 
+
+  }
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/articles`)
-      .then((res) => res.json())
-      .then((data) => setArticles(data))
-      .catch((error) => console.error("Error fetching articles:", error));
+    // fetch(`${API_BASE_URL}/api/articles`)
+    //   .then((res) => res.json())
+    //   .then((data) => setArticles(data))
+    //   .catch((error) => console.error("Error fetching articles:", error));
+    fetchArticles();
   }, []);
 
   useEffect(() => {

@@ -2,8 +2,9 @@ import React, { useContext, useState, useEffect } from 'react'; // ✅ Added `us
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Heart, Bookmark } from 'lucide-react'; // ✅ Ensure these icons exist
+import { API_BASE_URL } from '../utils/api';
 
-const API_BASE_URL = "http://localhost:5000";
+
 
 const ArticlePage = () => {
     const { id } = useParams(); // Get ObjectId from URL

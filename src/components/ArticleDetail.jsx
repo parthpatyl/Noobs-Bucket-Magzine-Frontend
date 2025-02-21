@@ -2,8 +2,9 @@ import React, { useContext, useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Heart, Share2, Bookmark } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
+import { API_BASE_URL } from "../utils/api";
 
-const API_BASE_URL = "http://localhost:5000"; // Backend API URL
 
 const ArticleDetail = () => {
   const { id } = useParams();
@@ -14,26 +15,19 @@ const ArticleDetail = () => {
   const [error, setError] = useState(null);
   const [articles, setArticles] = useState([]); // For category articles
 
-  // Fetch article data
   const fetchArticle = async () => {
+    console.log(id);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/articles/${id}`);
-      
-      // Check if the response is JSON
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        const text = await response.text();
-        throw new Error(`Server did not return JSON. Response: ${text}`);
+      const response = await axios.get(`${API_BASE_URL}/api/articles/get/${id}`);
+      console.log(response.data.article);
+      console.log(response.status);
+      if(response.status === 200) {
+        setArticle(response.data.article);
+        fetchAllArticles();
       }
-  
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch article');
+      else {
+        throw new Error('Failed to fetch article');
       }
-      
-      setArticle(data);
-      fetchAllArticles();
     } catch (error) {
       console.error("Error fetching article:", error);
       setError(error.message);
@@ -42,16 +36,15 @@ const ArticleDetail = () => {
     }
   };
 
+
+
   // Fetch all articles for categories
   const fetchAllArticles = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/articles`);
-      const data = await response.json();
-      
+      const response = await axios.get(`${API_BASE_URL}/api/articles`);
       if (!response.ok) {
         throw new Error(data.message || 'Failed to fetch articles');
       }
-      
       setArticles(data);
     } catch (error) {
       console.error("Error fetching articles:", error);
@@ -84,7 +77,7 @@ const ArticleDetail = () => {
   const handleCategoryClick = (categoryName) => {
     const categoryArticles = categories[categoryName]?.articles || [];
     if (categoryArticles.length === 0 || !article) return;
-    
+
     const currentArticleDate = new Date(article.date);
     const sameDateArticles = categoryArticles.filter((item) => {
       const itemDate = new Date(item.date);
@@ -94,7 +87,7 @@ const ArticleDetail = () => {
         itemDate.getDate() === currentArticleDate.getDate()
       );
     });
-    
+
     if (sameDateArticles.length > 0) {
       navigate(`/article/${sameDateArticles[0]._id}`);
     }
@@ -126,7 +119,7 @@ const ArticleDetail = () => {
       const newSaved = isSaved
         ? user.savedArticles.filter((_id) => _id !== article._id)
         : [...(user.savedArticles || []), article._id];
-      
+
       await updateUser(user._id, { savedArticles: newSaved });
     } catch (error) {
       console.error('Error toggling save:', error);
@@ -156,7 +149,7 @@ const ArticleDetail = () => {
       const newLiked = isLiked
         ? user.likedArticles.filter((_id) => _id !== article._id)
         : [...(user.likedArticles || []), article._id];
-      
+
       await updateUser(user._id, { likedArticles: newLiked });
     } catch (error) {
       console.error('Error toggling like:', error);
@@ -208,7 +201,7 @@ const ArticleDetail = () => {
           <ArrowLeft className="h-5 w-5 mr-2" />
           Back to Articles
         </button>
-        
+
         <div className="grid grid-cols-12 gap-5">
           {/* Left Sidebar */}
           <div className="col-span-3">
@@ -220,7 +213,7 @@ const ArticleDetail = () => {
                   onClick={() => handleCategoryClick(categoryName)}
                   className={`w-full text-left py-2 px-3 rounded transition-colors 
                     ${article.category === categoryName
-                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
+                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
                       : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
                     }`}
                 >
@@ -258,17 +251,15 @@ const ArticleDetail = () => {
                   <div className="flex space-x-4">
                     <button
                       onClick={toggleLike}
-                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                        isLiked ? 'text-red-500' : 'text-gray-500'
-                      }`}
+                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isLiked ? 'text-red-500' : 'text-gray-500'
+                        }`}
                     >
                       <Heart className="h-5 w-5" fill={isLiked ? 'currentColor' : 'none'} />
                     </button>
                     <button
                       onClick={toggleSave}
-                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                        isSaved ? 'text-blue-500' : 'text-gray-500'
-                      }`}
+                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isSaved ? 'text-blue-500' : 'text-gray-500'
+                        }`}
                     >
                       <Bookmark className="h-5 w-5" fill={isSaved ? 'currentColor' : 'none'} />
                     </button>
