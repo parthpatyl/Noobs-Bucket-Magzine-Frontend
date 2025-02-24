@@ -25,7 +25,7 @@ const MagazinePage = () => {
   };
   const fetchArticles = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/articles`);
+      const response = await fetch(`${API_BASE_URL}/api/articles/get`);
       const data = await response.json();
       console.log(data);
       if (!response.ok) {
@@ -39,10 +39,6 @@ const MagazinePage = () => {
 
   }
   useEffect(() => {
-    // fetch(`${API_BASE_URL}/api/articles`)
-    //   .then((res) => res.json())
-    //   .then((data) => setArticles(data))
-    //   .catch((error) => console.error("Error fetching articles:", error));
     fetchArticles();
   }, []);
 
@@ -75,7 +71,7 @@ const MagazinePage = () => {
       : [...savedArticles, articleId];
 
     setSavedArticles(newSaved);
-    await updateUser(user._id, { savedArticles: newSaved }); // Ensure await
+    await updateUser(user.id, { savedArticles: newSaved }); // Ensure await
   };
 
   const toggleLike = async (articleId) => {
@@ -86,7 +82,7 @@ const MagazinePage = () => {
       : [...likedArticles, articleId];
 
     setLikedArticles(newLiked); // Fix: Use newLiked instead of newSaved
-    await updateUser(user._id, { likedArticles: newLiked }); // Ensure await
+    await updateUser(user.id, { likedArticles: newLiked }); // Ensure await
   };
 
   const shareArticle = (article) => {

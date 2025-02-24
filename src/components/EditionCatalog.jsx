@@ -42,7 +42,7 @@ const TimelineNav = ({ articles, isMinimized, onToggleMinimize }) => {
         </button>
       </div>
 
-      {!isMinimized && (
+      {isMinimized && (
         <div className="space-y-2">
           {saturdays.map(saturday => {
             const dateStr = format(saturday, 'dd-MM-yyyy');

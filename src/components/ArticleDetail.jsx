@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Heart, Share2, Bookmark } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
 import { API_BASE_URL } from "../utils/api";
 
 
@@ -15,47 +14,22 @@ const ArticleDetail = () => {
   const [error, setError] = useState(null);
   const [articles, setArticles] = useState([]); // For category articles
 
-  const fetchArticle = async () => {
-    console.log(id);
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/articles/get/${id}`);
-      console.log(response.data.article);
-      console.log(response.status);
-      if(response.status === 200) {
-        setArticle(response.data.article);
-        fetchAllArticles();
-      }
-      else {
-        throw new Error('Failed to fetch article');
-      }
-    } catch (error) {
-      console.error("Error fetching article:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-
-  // Fetch all articles for categories
-  const fetchAllArticles = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/articles`);
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch articles');
-      }
-      setArticles(data);
-    } catch (error) {
-      console.error("Error fetching articles:", error);
-    }
-  };
-
   useEffect(() => {
-    if (id) {
-      fetchArticle();
-    }
-  }, [id]);
+    fetch(`${API_BASE_URL}/api/articles/get/${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.article) {
+                setArticle(data.article);
+            } else {
+                console.error("Article not found:", data);
+            }
+            setLoading(false);
+        })
+        .catch((error) => {
+            console.error("Error fetching article:", error);
+            setLoading(false);
+        });
+}, [id]);
 
   // Get unique categories and their articles count
   const categories = useMemo(() => {
@@ -89,12 +63,12 @@ const ArticleDetail = () => {
     });
 
     if (sameDateArticles.length > 0) {
-      navigate(`/article/${sameDateArticles[0]._id}`);
+      navigate(`/article/${sameDateArticles[0].id}`);
     }
   };
 
-  const isSaved = user?.savedArticles?.includes(article?._id);
-  const isLiked = user?.likedArticles?.includes(article?._id);
+  const isSaved = user?.savedArticles?.includes(article?.id);
+  const isLiked = user?.likedArticles?.includes(article?.id);
 
   const toggleSave = async () => {
     if (!user || !article) return;
@@ -107,8 +81,8 @@ const ArticleDetail = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: user._id,
-          articleId: article._id
+          id: user.id,
+          articleId: article.id
         }),
       });
 
@@ -117,10 +91,10 @@ const ArticleDetail = () => {
       }
 
       const newSaved = isSaved
-        ? user.savedArticles.filter((_id) => _id !== article._id)
-        : [...(user.savedArticles || []), article._id];
+        ? user.savedArticles.filter((id) => id !== article.id)
+        : [...(user.savedArticles || []), article.id];
 
-      await updateUser(user._id, { savedArticles: newSaved });
+      await updateUser(user.id, { savedArticles: newSaved });
     } catch (error) {
       console.error('Error toggling save:', error);
     }
@@ -137,8 +111,8 @@ const ArticleDetail = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: user._id,
-          articleId: article._id
+          id: user.id,
+          articleId: article.id
         }),
       });
 
@@ -147,10 +121,10 @@ const ArticleDetail = () => {
       }
 
       const newLiked = isLiked
-        ? user.likedArticles.filter((_id) => _id !== article._id)
-        : [...(user.likedArticles || []), article._id];
+        ? user.likedArticles.filter((id) => id !== article.id)
+        : [...(user.likedArticles || []), article.id];
 
-      await updateUser(user._id, { likedArticles: newLiked });
+      await updateUser(user.id, { likedArticles: newLiked });
     } catch (error) {
       console.error('Error toggling like:', error);
     }
