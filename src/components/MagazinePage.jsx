@@ -6,6 +6,7 @@ import FeaturedArticle from './FeaturedArticle';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
+import { formatDate } from '../utils/dateUtils';
 
 
 const MagazinePage = () => {
@@ -213,7 +214,7 @@ const MagazinePage = () => {
                     <div className="mt-4 flex justify-between items-center">
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</span>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">{article.date}</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(article.date)}</span>
                       </div>
                       <button
                         onClick={() => handleReadMore(article)}

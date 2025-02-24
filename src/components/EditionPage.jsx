@@ -1,18 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
+import axios from 'axios';
+import { API_BASE_URL } from '../utils/api';
+import { formatDate } from '../utils/dateUtils';
 
 const EditionPage = () => {
   const { date } = useParams();
   const navigate = useNavigate();
+  const [editionArticles, setEditionArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const editionArticles = articlesData.articles.filter(article => 
-    format(parseISO(article.date), 'dd-MM-yyyy') === date
-  );
+  useEffect(() => {
+      const fetchEditionArticles = async () => {
+          try {
+              const response = await axios.get(`${API_BASE_URL}/api/articles/get`);
+              if (response.status === 200) {
+                  const filteredArticles = response.data.filter(article => 
+                      format(parseISO(article.date), 'dd-MM-yyyy') === date
+                  );
+                  setEditionArticles(filteredArticles);
+              } else {
+                  throw new Error("Failed to fetch articles");
+              }
+          } catch (error) {
+              console.error("❌ Error fetching edition articles:", error);
+          } finally {
+              setLoading(false);
+          }
+      };
+
+      fetchEditionArticles();
+  }, [date]);
 
   const handleReadMore = (articleId) => {
-    navigate(`/article/${articleId}`);
+      navigate(`/article/${articleId}`);
   };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
@@ -36,7 +61,7 @@ const EditionPage = () => {
             {editionArticles.length > 0 ? (
               editionArticles.map(article => (
                 <div 
-                  key={article.id}
+                  key={article._id}
                   className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
                 >
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
@@ -46,10 +71,10 @@ const EditionPage = () => {
                     {article.excerpt}
                   </p>
                   <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    {format(parseISO(article.date), 'MMMM do, yyyy')}
+                    {formatDate(article.date)}
                   </div>
                   <button
-                    onClick={() => handleReadMore(article.id)}
+                    onClick={() => handleReadMore(article._id)}
                     className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     Read More

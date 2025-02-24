@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { formatDate } from '../utils/dateUtils';
 
 const FeaturedArticle = ({ articles, interval = 5000 }) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Track the current article index
@@ -38,7 +39,7 @@ const FeaturedArticle = ({ articles, interval = 5000 }) => {
           <p className="text-gray-200 mt-2">{currentArticle.excerpt}</p>
           <div className="flex items-center space-x-4 mt-4">
             <span className="text-gray-300">{currentArticle.readTime}</span>
-            <span className="text-gray-300">{currentArticle.date}</span>
+            <span className="text-gray-300">{formatDate(currentArticle.date)}</span>
           </div>
         </div>
       </div>
