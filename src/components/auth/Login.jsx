@@ -12,16 +12,19 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const result = await login(email, password);
-      if (result.success) {
-        navigate(`/user/${result.user.id}`);
-      } else {
-        alert(result.message || 'Login failed');
-      }
+        const result = await login(email, password);
+
+        if (result.success && result.user?.id) {
+            console.log("🚀 Redirecting to /user/" + result.user.id);
+            navigate(`/user/${result.user.id}`);
+        } else {
+            alert(result.message || "Login failed");
+        }
     } catch (error) {
-      alert(error.message || 'An error occurred');
+        alert(error.message || "An error occurred");
     }
-  };
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">

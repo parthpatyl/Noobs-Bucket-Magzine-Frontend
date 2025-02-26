@@ -1,5 +1,7 @@
 import { createContext, useState } from 'react';
 import { API_BASE_URL } from '../utils/api';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
@@ -26,7 +28,6 @@ export const AuthProvider = ({ children }) => {
       if (data.success) {
         localStorage.setItem('user', JSON.stringify({
           ...data.user,
-          memberSince: data.user.memberSince // Ensure this is included
         }));
         setUser(data.user);
       }
@@ -40,31 +41,32 @@ export const AuthProvider = ({ children }) => {
   // Update login function
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-  
-      if (data.success) {
-        localStorage.setItem('user', JSON.stringify({
-          ...data.user,
-          memberSince: data.user.memberSince // Ensure this is included
-        }));
-        setUser(data.user);
-      }
-      return data;
+        const response = await axios.post(`${API_BASE_URL}/auth/login`, { 
+            email, 
+            password 
+        }, { withCredentials: true });
+
+        console.log("🔍 Full API Response:", response);
+
+        if (!response.data || !response.data.success) {
+            console.error("❌ Login failed:", response.data);
+            return { success: false, message: "Invalid login response" }; // ✅ Fix: Return proper error response
+        }
+
+        setUser(response.data.user);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        console.log("✅ User logged in:", response.data.user);
+
+        return { success: true, user: response.data.user }; // ✅ Fix: Ensure login function returns correct data
     } catch (error) {
-      console.error('Login error:', error);
-      return { success: false, message: error.message };
+        console.error("❌ Error during login:", error.response?.data || error.message);
+        return { success: false, message: error.response?.data?.message || "Login failed" }; // ✅ Fix: Return error object
     }
-  };
+};
+
+
+
   
   const logout = () => {
     localStorage.removeItem('user');
@@ -91,6 +93,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAuthenticated = !!user;
+
+  
 
   return (
     <AuthContext.Provider
