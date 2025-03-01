@@ -45,8 +45,15 @@ const MagazinePage = () => {
 
   useEffect(() => {
     if (user) {
+      // Make sure we're using the arrays from user data, or initialize as empty arrays
       setSavedArticles(user.savedArticles || []);
       setLikedArticles(user.likedArticles || []);
+      
+      // Log for debugging
+      console.log("Loaded user data:", {
+        savedArticles: user.savedArticles || [],
+        likedArticles: user.likedArticles || []
+      });
     }
   }, [user]);
 
@@ -65,25 +72,62 @@ const MagazinePage = () => {
     currentPage * itemsPerPage
   );
 
+
+
   const toggleSave = async (articleId) => {
     if (!user) return;
-    const newSaved = savedArticles.includes(articleId)
-      ? savedArticles.filter(id => id !== articleId)
-      : [...savedArticles, articleId];
 
-    setSavedArticles(newSaved);
-    await updateUser(user.id, { savedArticles: newSaved }); // Ensure await
+    // ✅ Instantly update UI
+    const updatedSaves = savedArticles.includes(articleId)
+      ? savedArticles.filter(id => id !== articleId)  // Remove save
+      : [...savedArticles, articleId];  // Add save
+
+    setSavedArticles(updatedSaves);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/articles/save/${articleId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to update saved status");
+
+      // ✅ Update state with backend response (ensures persistence)
+      setSavedArticles(data.savedArticles);
+    } catch (error) {
+      console.error("Error updating saved articles:", error);
+      setSavedArticles(savedArticles); // ❌ Rollback in case of failure
+    }
   };
 
   const toggleLike = async (articleId) => {
-    if (!user) return; // Add guard clause
+    if (!user) return;
 
-    const newLiked = likedArticles.includes(articleId)
-      ? likedArticles.filter(id => id !== articleId)
-      : [...likedArticles, articleId];
+    // ✅ Instantly update UI
+    const updatedLikes = likedArticles.includes(articleId)
+      ? likedArticles.filter(id => id !== articleId)  // Remove like
+      : [...likedArticles, articleId];  // Add like
 
-    setLikedArticles(newLiked); // Fix: Use newLiked instead of newSaved
-    await updateUser(user.id, { likedArticles: newLiked }); // Ensure await
+    setLikedArticles(updatedLikes);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/articles/like/${articleId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to update like status");
+
+      // ✅ Update state with the backend response (ensures persistence)
+      setLikedArticles(data.likedArticles);
+    } catch (error) {
+      console.error("Error updating likes:", error);
+      setLikedArticles(likedArticles); // ❌ Rollback in case of failure
+    }
   };
 
   const shareArticle = (article) => {
@@ -191,19 +235,21 @@ const MagazinePage = () => {
                       </div>
                       <div className="flex space-x-2">
                         <button
-                          onClick={() => toggleLike(article.id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${likedArticles.includes(article.id) ? 'text-red-500' : 'text-gray-500'
+                          onClick={() => toggleLike(article._id || article.id)}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${likedArticles.includes(article._id || article.id) ? "text-red-500" : "text-gray-500"
                             }`}
                         >
-                          <Heart className="h-5 w-5" fill={likedArticles.includes(article.id) ? "currentColor" : "none"} />
+                          <Heart className="h-5 w-5" fill={likedArticles.includes(article._id || article.id) ? "currentColor" : "none"} />
                         </button>
+
                         <button
-                          onClick={() => toggleSave(article.id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${savedArticles.includes(article.id) ? 'text-blue-500' : 'text-gray-500'
+                          onClick={() => toggleSave(article._id || article.id)}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${savedArticles.includes(article._id || article.id) ? "text-blue-500" : "text-gray-500"
                             }`}
                         >
-                          <Bookmark className="h-5 w-5" fill={savedArticles.includes(article.id) ? "currentColor" : "none"} />
+                          <Bookmark className="h-5 w-5" fill={savedArticles.includes(article._id || article.id) ? "currentColor" : "none"} />
                         </button>
+
                         <button
                           onClick={() => shareArticle(article)}
                           className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500">
@@ -266,7 +312,9 @@ const MagazinePage = () => {
                       <div className="flex justify-between items-center mt-2">
                         <p className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</p>
                         <button
-                          onClick={() => toggleSave(article.id)}
+                          onClick={() => {
+                            toggleSave(article.id)
+                          }}
                           className="text-blue-500"
                         >
                           <Bookmark className="h-4 w-4" fill="currentColor" />
