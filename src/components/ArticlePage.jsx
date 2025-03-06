@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { Heart, Bookmark } from 'lucide-react';
 import { API_BASE_URL } from '../utils/api';
 
 const ArticlePage = () => {
