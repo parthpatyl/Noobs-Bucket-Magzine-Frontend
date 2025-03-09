@@ -12,33 +12,29 @@ export const AuthProvider = ({ children }) => {
   const [likedArticles, setLikedArticles] = useState([]);
   const [savedArticles, setSavedArticles] = useState([]);
 
+  // Fetch user data from backend on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setIsAuthenticated(true);
-      setLikedArticles(JSON.parse(localStorage.getItem("likedArticles") || "[]"));
-      setSavedArticles(JSON.parse(localStorage.getItem("savedArticles") || "[]"));
-      fetchUserData(parsedUser._id || parsedUser.id);
-    }
+    fetchUserData();
   }, []);
 
   const fetchUserData = async (userId) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/auth/user/${userId}`, {
+      // If userId isn't provided, try to fetch from a generic endpoint
+      // that returns the current session's user data
+      const idToFetch = userId || ""; // Adjust if your backend supports session-based fetching
+      const response = await axios.get(`${API_BASE_URL}/auth/user/${idToFetch}`, {
         withCredentials: true,
         headers: { "Accept": "application/json" }
       });
       if (response.data && response.data.user) {
         const userData = response.data.user;
+        setUser(userData);
+        setIsAuthenticated(true);
         if (userData.likedArticles) {
           setLikedArticles(userData.likedArticles);
-          localStorage.setItem("likedArticles", JSON.stringify(userData.likedArticles));
         }
         if (userData.savedArticles) {
           setSavedArticles(userData.savedArticles);
-          localStorage.setItem("savedArticles", JSON.stringify(userData.savedArticles));
         }
       } else {
         console.error("Failed to fetch user data:", response.data);
@@ -48,7 +44,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Updated login to employ axios and consistently use _id
   const login = async (email, password) => {
     setLoading(true);
     try {
@@ -67,14 +62,11 @@ export const AuthProvider = ({ children }) => {
       const userData = { ...data.user, _id: data.user._id || data.user.id };
       setUser(userData);
       setIsAuthenticated(true);
-      localStorage.setItem("user", JSON.stringify(userData));
       if (userData.likedArticles) {
         setLikedArticles(userData.likedArticles);
-        localStorage.setItem("likedArticles", JSON.stringify(userData.likedArticles));
       }
       if (userData.savedArticles) {
         setSavedArticles(userData.savedArticles);
-        localStorage.setItem("savedArticles", JSON.stringify(userData.savedArticles));
       }
       return { success: true, user: userData };
     } catch (error) {
@@ -91,18 +83,13 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem("user");
-      localStorage.removeItem("likedArticles");
-      localStorage.removeItem("savedArticles");
       setUser(null);
       setIsAuthenticated(false);
       setLikedArticles([]);
       setSavedArticles([]);
-      window.location.reload();
     }
   };
 
-  // Newly added register function, echoing our classic practices
   const register = async (name, email, password) => {
     setLoading(true);
     try {
@@ -128,7 +115,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const updatedUser = { ...user, ...updatedData };
       setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
       return { success: true };
     } catch (error) {
       console.error("Update user error:", error);
@@ -139,10 +125,8 @@ export const AuthProvider = ({ children }) => {
   const likeArticle = async (articleId) => {
     if (!user) return { success: false, message: "Not authenticated" };
     try {
-      const updatedLikes = [...likedArticles, articleId];
-      setLikedArticles(updatedLikes);
-      localStorage.setItem("likedArticles", JSON.stringify(updatedLikes));
       await axios.post(`${API_BASE_URL}/api/articles/like/${articleId}`, { userId: user._id }, { withCredentials: true });
+      // Refresh user data from backend to update liked articles\n      fetchUserData(user._id);
       return { success: true };
     } catch (error) {
       console.error("Like article error:", error);
@@ -153,10 +137,8 @@ export const AuthProvider = ({ children }) => {
   const unlikeArticle = async (articleId) => {
     if (!user) return { success: false, message: "Not authenticated" };
     try {
-      const updatedLikes = likedArticles.filter(id => id !== articleId);
-      setLikedArticles(updatedLikes);
-      localStorage.setItem("likedArticles", JSON.stringify(updatedLikes));
       await axios.post(`${API_BASE_URL}/api/articles/unlike/${articleId}`, { userId: user._id }, { withCredentials: true });
+      fetchUserData(user._id);
       return { success: true };
     } catch (error) {
       console.error("Unlike article error:", error);
@@ -167,10 +149,8 @@ export const AuthProvider = ({ children }) => {
   const saveArticle = async (articleId) => {
     if (!user) return { success: false, message: "Not authenticated" };
     try {
-      const updatedSaved = [...savedArticles, articleId];
-      setSavedArticles(updatedSaved);
-      localStorage.setItem("savedArticles", JSON.stringify(updatedSaved));
       await axios.post(`${API_BASE_URL}/api/articles/save/${articleId}`, { userId: user._id }, { withCredentials: true });
+      fetchUserData(user._id);
       return { success: true };
     } catch (error) {
       console.error("Save article error:", error);
@@ -181,10 +161,8 @@ export const AuthProvider = ({ children }) => {
   const unsaveArticle = async (articleId) => {
     if (!user) return { success: false, message: "Not authenticated" };
     try {
-      const updatedSaved = savedArticles.filter(id => id !== articleId);
-      setSavedArticles(updatedSaved);
-      localStorage.setItem("savedArticles", JSON.stringify(updatedSaved));
       await axios.post(`${API_BASE_URL}/api/articles/unsave/${articleId}`, { userId: user._id }, { withCredentials: true });
+      fetchUserData(user._id);
       return { success: true };
     } catch (error) {
       console.error("Unsave article error:", error);
@@ -208,11 +186,7 @@ export const AuthProvider = ({ children }) => {
     unsaveArticle
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

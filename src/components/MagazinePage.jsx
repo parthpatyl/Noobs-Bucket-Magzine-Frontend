@@ -6,17 +6,35 @@ import FeaturedArticle from './FeaturedArticle';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
-import { format, parseISO } from 'date-fns';
+import { parseISO, format } from "date-fns";
 
-// A robust date formatting function ensuring proper display
 const formatArticleDate = (rawDate) => {
   if (!rawDate) return "No date available";
   try {
-    const dateObj = typeof rawDate === "string" ? parseISO(rawDate) : new Date(rawDate);
-    return format(dateObj, "dd MMM yyyy");
+    let dateObj;
+    
+    // Handle MongoDB Extended JSON format: { "$date": "2025-01-11T00:00:00.000Z" }
+    if (typeof rawDate === "object" && rawDate.$date) {
+      dateObj = new Date(rawDate.$date);
+    }
+    // Handle ISO string date: "2025-01-11T00:00:00.000Z"
+    else if (typeof rawDate === "string" && !isNaN(Date.parse(rawDate))) {
+      dateObj = parseISO(rawDate);
+    }
+    // Handle already-converted Date objects
+    else if (rawDate instanceof Date && !isNaN(rawDate.getTime())) {
+      dateObj = rawDate;
+    }
+    // If format is unrecognized, return "Invalid Date"
+    else {
+      console.error("⚠️ Unrecognized date format:", rawDate);
+      return "Invalid Date";
+    }
+
+    return format(dateObj, "dd MMM yyyy"); // e.g., "11 Jan 2025"
   } catch (error) {
-    console.error("Error formatting date:", error);
-    return rawDate;
+    console.error("❌ Error formatting date:", error);
+    return "Invalid Date";
   }
 };
 
@@ -260,7 +278,7 @@ const MagazinePage = () => {
                     <p className="text-gray-600 dark:text-gray-300">{article.excerpt}</p>
                     <div className="mt-4 flex justify-between items-center">
                       <div className="flex items-center space-x-4">
-                        <span className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">{article.readtime}</span>
                         <span className="text-sm text-gray-500 dark:text-gray-400">{formatArticleDate(article.date)}</span>
                       </div>
                       <button
@@ -312,7 +330,7 @@ const MagazinePage = () => {
                     <div key={article._id} className="border-b last:border-b-0 pb-4 mb-4 last:mb-0">
                       <h4 className="font-medium dark:text-white">{article.title}</h4>
                       <div className="flex justify-between items-center mt-2">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{article.readtime}</p>
                         <button onClick={() => toggleSave(article._id)} className="text-blue-500">
                           <Bookmark className="h-4 w-4" fill="currentColor" />
                         </button>

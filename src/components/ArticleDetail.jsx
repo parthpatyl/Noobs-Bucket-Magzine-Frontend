@@ -232,7 +232,7 @@ const ArticleDetail = () => {
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                     <span>{formatArticleDate(article.date)}</span>
-                    <span>{article.readTime}</span>
+                    <span>{article.readtime}</span>
                   </div>
                 </div>
                 <div className="prose dark:prose-invert max-w-none">

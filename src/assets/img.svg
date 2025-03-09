@@ -1,0 +1,83 @@
+<svg width="1536" height="708" viewBox="0 0 1536 708" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Modified radial gradient to green tones -->
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="100%" fx="50%" fy="50%">
+      <stop offset="0%" style="stop-color:#0D2F07; stop-opacity:1" /> <!-- Dark forest green -->
+      <stop offset="100%" style="stop-color:#1E593B; stop-opacity:1" /> <!-- Deep teal-green -->
+    </radialGradient>
+
+    <!-- Adjusted grid color to complement green background -->
+    <pattern id="gridPattern" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="25" height="25" fill="none" stroke="#EAC309" stroke-width="3"/>
+    </pattern>
+  </defs>
+
+  <!-- Green background -->
+  <rect width="1536" height="708" fill="url(#bgGradient)" />
+
+  <!-- Rest of the elements remain unchanged but now on green background -->
+  <rect width="1536" height="708" fill="url(#gridPattern)" opacity="0.07" />
+
+  <!-- Retro Taskbar -->
+    <!-- Taskbar -->
+    <rect x="0" y="648" width="1536" height="60" fill="#1E293B" fill-opacity="0.8" rx="2"/>
+    <rect x="20" y="657" width="40" height="40" fill="#EAB308" rx="2"/>
+    <path d="M40 677L50 667L60 677L50 687L40 677Z" fill="#1E293B"/> <!-- Adjusted Windows flag position -->
+    <rect x="70" y="662" width="30" height="30" fill="#3B82F6" rx="2"/> <!-- Reduced from 100 -->
+    <rect x="110" y="662" width="30" height="30" fill="#22C55E" rx="2"/> <!-- Reduced from 160 -->
+  <rect x="150" y="662" width="30" height="30" fill="#EF4444" rx="2"/> <!-- Reduced from 220 -->
+
+<!-- Window Decorations -->
+<g transform="translate(50, 200)">
+  <rect width="300" height="200" fill="#1E293B" rx="4"/>
+  <rect width="300" height="30" fill="#3B82F6" rx="4"/>
+  <circle cx="270" cy="15" r="6" fill="#EF4444"/>
+  <circle cx="250" cy="15" r="6" fill="#EAB308"/>
+  <circle cx="230" cy="15" r="6" fill="#22C55E"/>
+  <text x="15" y="20" fill="#000000" font-family="monospace" font-size="16">Your Profile</text>
+  
+  <!-- User Profile Data -->
+  <g font-family="monospace" fill="#EAB308">
+    <!-- Avatar -->
+    <circle cx="50" cy="65" r="23" fill="#3B82F6"/>
+    <text x="50" y="70" text-anchor="middle" font-size="20"  fill="#1E293B">PP</text>
+    
+    <!-- User Info -->
+    <text x="100" y="50" font-size="14">USER: PP_DEVELOPER</text>
+    <text x="100" y="70" font-size="14">RANK: LEVEL 42</text>
+    <text x="100" y="90" font-size="14">JOINED: 2005-04-23</text>
+    
+    <!-- Separator -->
+    <rect x="20" y="110" width="260" height="2" fill="#3B82F6"/>
+    
+    <!-- Stats -->
+    <text x="20" y="130" font-size="12">DISK USAGE: [#####-----] 52%</text>
+    <text x="20" y="150" font-size="12">TASKS: [████▌    ] 68%</text>
+    <text x="20" y="170" font-size="12">ACHIEVEMENTS: 24/50</text>
+    
+    <!-- Status -->
+    <rect x="20" y="180" width="10" height="10" fill="#22C55E" rx="2"/>
+    <text x="35" y="190" font-size="12">ONLINE</text>
+  </g>
+</g>
+
+  <!-- Retro Command Prompt -->
+  <g transform="translate(1200, 300)">
+    <rect width="400" height="250" fill="#1E293B" rx="4"/>
+    <rect width="400" height="30" fill="#3B82F6" rx="4"/>
+    <text x="15" y="20" fill="#000000" font-family="monospace" font-size="16">Terminal</text>
+    <text x="20" y="60" fill="#EAB308" font-family="monospace" font-size="16">
+      <tspan x="20" dy="1.2em">C:\&gt; Welcome to Retro Magazine</tspan>
+      <tspan x="20" dy="1.2em">Loading vintage content...</tspan>
+      <tspan x="20" dy="1.2em" fill="#22C55E">&gt; git add</tspan>
+      <tspan x="20" dy="1.2em" fill="#22C55E">&gt; git commit</tspan>
+      <tspan x="20" dy="1.2em" fill="#22C55E">&gt; git push</tspan>
+      <tspan x="20" dy="1.2em" fill="#22C55E">System OK</tspan>
+    </text>
+    <rect x="20" y="220" width="10" height="2" fill="#EAB308">
+      <animate attributeName="opacity" values="1;0" dur="0.5s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- Previous retro icons and other elements remain here -->
+</svg>
