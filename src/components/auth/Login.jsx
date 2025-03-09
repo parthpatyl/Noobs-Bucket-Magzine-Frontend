@@ -7,19 +7,17 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // Use AuthContext
+  const { login } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     const result = await login(email, password);
-    if (result.success) {
-      navigate(`/user/${result.user.id}`);
+    if (result.success && result.user) {
+      navigate(`/user/${result.user._id}`);
     } else {
       alert(result.message || "Login failed");
     }
   };
-  
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">

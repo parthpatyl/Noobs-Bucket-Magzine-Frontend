@@ -6,8 +6,19 @@ import FeaturedArticle from './FeaturedArticle';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
-import { formatDate } from '../utils/dateUtils';
+import { format, parseISO } from 'date-fns';
 
+// A robust date formatting function ensuring proper display
+const formatArticleDate = (rawDate) => {
+  if (!rawDate) return "No date available";
+  try {
+    const dateObj = typeof rawDate === "string" ? parseISO(rawDate) : new Date(rawDate);
+    return format(dateObj, "dd MMM yyyy");
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return rawDate;
+  }
+};
 
 const MagazinePage = () => {
   const [articles, setArticles] = useState([]);
@@ -19,37 +30,35 @@ const MagazinePage = () => {
   const [isEditionMinimized, setIsEditionMinimized] = useState(false);
   const itemsPerPage = 8;
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout, updateUser } = useContext(AuthContext);
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
 
   const handleReadMore = (article) => {
     navigate(`/article/${article._id}`);
   };
+
+  // Fetch articles from the backend (ensure backend returns lean JSON)
   const fetchArticles = async () => {
     try {
+      console.log("📡 Fetching articles from:", `${API_BASE_URL}/api/articles/get`);
       const response = await fetch(`${API_BASE_URL}/api/articles/get`);
       const data = await response.json();
-      console.log(data);
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch articles');
-      }
+      console.log("✅ API Response:", data);
+      if (!response.ok) throw new Error(data.message || "Failed to fetch articles");
       setArticles(data);
     } catch (error) {
-      console.error("Error fetching articles:", error);
+      console.error("❌ Error fetching articles:", error);
     }
+  };
 
-
-  }
   useEffect(() => {
     fetchArticles();
   }, []);
 
+  // Sync saved and liked articles from user data
   useEffect(() => {
     if (user) {
-      // Make sure we're using the arrays from user data, or initialize as empty arrays
       setSavedArticles(user.savedArticles || []);
       setLikedArticles(user.likedArticles || []);
-      
-      // Log for debugging
       console.log("Loaded user data:", {
         savedArticles: user.savedArticles || [],
         likedArticles: user.likedArticles || []
@@ -57,8 +66,10 @@ const MagazinePage = () => {
     }
   }, [user]);
 
+  // Derive a list of unique categories from articles
   const categories = [...new Set(articles.map(article => article.category))];
 
+  // Filter articles based on search query and active category
   const filteredArticles = articles.filter(article => {
     const matchesCategory = !activeCategory || article.category === activeCategory;
     const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -72,61 +83,49 @@ const MagazinePage = () => {
     currentPage * itemsPerPage
   );
 
-
-
+  // Toggle save status using user._id consistently
   const toggleSave = async (articleId) => {
     if (!user) return;
-
-    // ✅ Instantly update UI
-    const updatedSaves = savedArticles.includes(articleId)
-      ? savedArticles.filter(id => id !== articleId)  // Remove save
-      : [...savedArticles, articleId];  // Add save
-
+    const isAlreadySaved = savedArticles.some(id => id === articleId);
+    const updatedSaves = isAlreadySaved
+      ? savedArticles.filter(id => id !== articleId)
+      : [...savedArticles, articleId];
     setSavedArticles(updatedSaves);
-
     try {
       const response = await fetch(`${API_BASE_URL}/api/articles/save/${articleId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
+        body: JSON.stringify({ userId: user._id })
       });
-
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to update saved status");
-
-      // ✅ Update state with backend response (ensures persistence)
       setSavedArticles(data.savedArticles);
     } catch (error) {
-      console.error("Error updating saved articles:", error);
-      setSavedArticles(savedArticles); // ❌ Rollback in case of failure
+      console.error("❌ Error updating saved articles:", error);
+      // Optionally revert state on error
     }
   };
 
+  // Toggle like status using user._id consistently
   const toggleLike = async (articleId) => {
     if (!user) return;
-
-    // ✅ Instantly update UI
-    const updatedLikes = likedArticles.includes(articleId)
-      ? likedArticles.filter(id => id !== articleId)  // Remove like
-      : [...likedArticles, articleId];  // Add like
-
+    const isAlreadyLiked = likedArticles.some(id => id === articleId);
+    const updatedLikes = isAlreadyLiked
+      ? likedArticles.filter(id => id !== articleId)
+      : [...likedArticles, articleId];
     setLikedArticles(updatedLikes);
-
     try {
       const response = await fetch(`${API_BASE_URL}/api/articles/like/${articleId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
+        body: JSON.stringify({ userId: user._id })
       });
-
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to update like status");
-
-      // ✅ Update state with the backend response (ensures persistence)
       setLikedArticles(data.likedArticles);
     } catch (error) {
-      console.error("Error updating likes:", error);
-      setLikedArticles(likedArticles); // ❌ Rollback in case of failure
+      console.error("❌ Error updating liked articles:", error);
+      // Optionally revert state on error
     }
   };
 
@@ -163,7 +162,7 @@ const MagazinePage = () => {
               {isAuthenticated ? (
                 <div className="flex items-center gap-4">
                   <button
-                    onClick={() => navigate(`/user/${user.id}`)}
+                    onClick={() => navigate(`/user/${user._id}`)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
                     Profile
@@ -219,9 +218,9 @@ const MagazinePage = () => {
           <div className="lg:col-span-6 space-y-6">
             {currentArticles.length > 0 ? (
               currentArticles.map(article => (
-                <div key={article.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                <div key={article._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
                   <img
-                    src={article.image}
+                    src={article.image && Array.isArray(article.image) ? article.image[0] : article.image}
                     alt={article.title}
                     className="w-full h-48 object-cover"
                   />
@@ -235,36 +234,39 @@ const MagazinePage = () => {
                       </div>
                       <div className="flex space-x-2">
                         <button
-                          onClick={() => toggleLike(article._id || article.id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${likedArticles.includes(article._id || article.id) ? "text-red-500" : "text-gray-500"
-                            }`}
+                          onClick={() => toggleLike(article._id)}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                            likedArticles.some(id => id === article._id) ? "text-red-500" : "text-gray-500"
+                          }`}
                         >
-                          <Heart className="h-5 w-5" fill={likedArticles.includes(article._id || article.id) ? "currentColor" : "none"} />
+                          <Heart className="h-5 w-5" fill={likedArticles.some(id => id === article._id) ? "currentColor" : "none"} />
                         </button>
-
                         <button
-                          onClick={() => toggleSave(article._id || article.id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${savedArticles.includes(article._id || article.id) ? "text-blue-500" : "text-gray-500"
-                            }`}
+                          onClick={() => toggleSave(article._id)}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                            savedArticles.some(id => id === article._id) ? "text-blue-500" : "text-gray-500"
+                          }`}
                         >
-                          <Bookmark className="h-5 w-5" fill={savedArticles.includes(article._id || article.id) ? "currentColor" : "none"} />
+                          <Bookmark className="h-5 w-5" fill={savedArticles.some(id => id === article._id) ? "currentColor" : "none"} />
                         </button>
-
                         <button
                           onClick={() => shareArticle(article)}
-                          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500">
-                          <Share2 className="h-5 w-5" /></button>
+                          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                        >
+                          <Share2 className="h-5 w-5" />
+                        </button>
                       </div>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300">{article.excerpt}</p>
                     <div className="mt-4 flex justify-between items-center">
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</span>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(article.date)}</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">{formatArticleDate(article.date)}</span>
                       </div>
                       <button
                         onClick={() => handleReadMore(article)}
-                        className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300">
+                        className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300"
+                      >
                         Read More →
                       </button>
                     </div>
@@ -305,18 +307,13 @@ const MagazinePage = () => {
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold mb-4 dark:text-white">Saved Articles</h2>
                 {articles
-                  .filter(article => savedArticles.includes(article.id))
+                  .filter(article => savedArticles.some(id => id === article._id))
                   .map(article => (
-                    <div key={article.id} className="border-b last:border-b-0 pb-4 mb-4 last:mb-0">
+                    <div key={article._id} className="border-b last:border-b-0 pb-4 mb-4 last:mb-0">
                       <h4 className="font-medium dark:text-white">{article.title}</h4>
                       <div className="flex justify-between items-center mt-2">
                         <p className="text-sm text-gray-500 dark:text-gray-400">{article.readTime}</p>
-                        <button
-                          onClick={() => {
-                            toggleSave(article.id)
-                          }}
-                          className="text-blue-500"
-                        >
+                        <button onClick={() => toggleSave(article._id)} className="text-blue-500">
                           <Bookmark className="h-4 w-4" fill="currentColor" />
                         </button>
                       </div>

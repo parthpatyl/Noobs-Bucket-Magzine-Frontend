@@ -4,7 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 const Register = () => {
-  const [name, setName] = useState(''); // Add name state
+  const [name, setName] = useState(''); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,7 +17,7 @@ const Register = () => {
       if (password !== confirmPassword) {
         throw new Error('Passwords do not match');
       }
-      const result = await register(name, email, password); // Pass name to register
+      const result = await register(name, email, password);
       if (result.success) {
         navigate('/auth/login');
       } else {
@@ -33,7 +33,6 @@ const Register = () => {
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Register</h2>
         <form onSubmit={handleRegister}>
-          {/* Add Name Field */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
             <input
