@@ -3,6 +3,24 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
 
+export function syncWithLocalStorage(key, defaultValue) {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultValue;
+  } catch (err) {
+    console.error(`Error loading ${key} from localStorage`, err);
+    return defaultValue;
+  }
+}
+
+export function updateLocalStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (err) {
+    console.error(`Error writing ${key} to localStorage`, err);
+  }
+}
+
 const UserProfile = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
@@ -71,6 +89,33 @@ const UserProfile = () => {
 
     fetchUserData();
   }, [user, navigate]);
+
+  useEffect(() => {
+    if (user) {
+      setSavedArticles(syncWithLocalStorage(`savedArticles_${user._id}`, []));
+      setLikedArticles(syncWithLocalStorage(`likedArticles_${user._id}`, []));
+    }
+  }, [user]);
+
+  const toggleSave = (articleId) => {
+    const isSaved = savedArticles.some(article => article._id === articleId);
+    const updatedSaves = isSaved
+      ? savedArticles.filter(article => article._id !== articleId)
+      : [...savedArticles, { _id: articleId }];
+
+    setSavedArticles(updatedSaves);
+    updateLocalStorage(`savedArticles_${user._id}`, updatedSaves);
+  };
+
+  const toggleLike = (articleId) => {
+    const isLiked = likedArticles.some(article => article._id === articleId);
+    const updatedLikes = isLiked
+      ? likedArticles.filter(article => article._id !== articleId)
+      : [...likedArticles, { _id: articleId }];
+
+    setLikedArticles(updatedLikes);
+    updateLocalStorage(`likedArticles_${user._id}`, updatedLikes);
+  };
 
   if (!user) {
     return null;
@@ -231,12 +276,6 @@ const UserProfile = () => {
 
           {/* Refresh and Navigation */}
           <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-between gap-4">
-            <button
-              onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Refresh Data
-            </button>
             <button
               onClick={() => navigate("/magazine")}
               className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"

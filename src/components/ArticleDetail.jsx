@@ -6,6 +6,24 @@ import { API_BASE_URL } from "../utils/api";
 import axios from "axios";
 import { parseISO, format } from "date-fns";
 
+export function syncWithLocalStorage(key, defaultValue) {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultValue;
+  } catch (err) {
+    console.error(`Error loading ${key} from localStorage`, err);
+    return defaultValue;
+  }
+}
+
+export function updateLocalStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (err) {
+    console.error(`Error writing ${key} to localStorage`, err);
+  }
+}
+
 const ArticleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,8 +39,10 @@ const ArticleDetail = () => {
   // Sync local state with user data
   useEffect(() => {
     if (user) {
-      setLikedArticles(user.likedArticles || []);
-      setSavedArticles(user.savedArticles || []);
+      const liked = syncWithLocalStorage(`likedArticles_${user?._id}`, []);
+      const saved = syncWithLocalStorage(`savedArticles_${user?._id}`, []);
+      setLikedArticles(liked);
+      setSavedArticles(saved);
     }
   }, [user]);
 
@@ -101,6 +121,7 @@ const ArticleDetail = () => {
       ? likedArticles.filter(id => id !== articleId)
       : [...likedArticles, articleId];
     setLikedArticles(updatedLikes);
+    updateLocalStorage(`likedArticles_${user._id}`, updatedLikes);
     try {
       const response = await axios.post(`${API_BASE_URL}/api/articles/like/${articleId}`, { userId: user._id });
       if (response.status === 200) {
@@ -121,6 +142,7 @@ const ArticleDetail = () => {
       ? savedArticles.filter(id => id !== articleId)
       : [...savedArticles, articleId];
     setSavedArticles(updatedSaves);
+    updateLocalStorage(`savedArticles_${user._id}`, updatedSaves);
     try {
       const response = await axios.post(`${API_BASE_URL}/api/articles/save/${articleId}`, { userId: user._id });
       if (response.status === 200) {

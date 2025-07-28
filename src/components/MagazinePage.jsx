@@ -38,6 +38,24 @@ const formatArticleDate = (rawDate) => {
   }
 };
 
+export function syncWithLocalStorage(key, defaultValue) {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultValue;
+  } catch (err) {
+    console.error(`Error loading ${key} from localStorage`, err);
+    return defaultValue;
+  }
+}
+
+export function updateLocalStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (err) {
+    console.error(`Error writing ${key} to localStorage`, err);
+  }
+}
+
 const MagazinePage = () => {
   const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -118,6 +136,7 @@ const MagazinePage = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to update saved status");
       setSavedArticles(data.savedArticles);
+      updateLocalStorage(`savedArticles_${user._id}`, updatedSaves);
     } catch (error) {
       console.error("❌ Error updating saved articles:", error);
       // Optionally revert state on error
@@ -141,6 +160,7 @@ const MagazinePage = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to update like status");
       setLikedArticles(data.likedArticles);
+      updateLocalStorage(`likedArticles_${user._id}`, updatedLikes);
     } catch (error) {
       console.error("❌ Error updating liked articles:", error);
       // Optionally revert state on error

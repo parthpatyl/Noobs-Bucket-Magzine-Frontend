@@ -14,7 +14,14 @@ export const AuthProvider = ({ children }) => {
 
   // Fetch user data from backend on mount
   useEffect(() => {
-    fetchUserData();
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setIsAuthenticated(true);
+      setLikedArticles(parsedUser.likedArticles || []);
+      setSavedArticles(parsedUser.savedArticles || []);
+    }
   }, []);
 
   const fetchUserData = async (userId) => {
@@ -68,6 +75,7 @@ export const AuthProvider = ({ children }) => {
       if (userData.savedArticles) {
         setSavedArticles(userData.savedArticles);
       }
+      localStorage.setItem("user", JSON.stringify(userData));
       return { success: true, user: userData };
     } catch (error) {
       console.error("Login error:", error);
@@ -87,6 +95,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(false);
       setLikedArticles([]);
       setSavedArticles([]);
+      localStorage.removeItem("user");
     }
   };
 
