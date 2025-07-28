@@ -2,24 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
-
-export function syncWithLocalStorage(key, defaultValue) {
-  try {
-    const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : defaultValue;
-  } catch (err) {
-    console.error(`Error loading ${key} from localStorage`, err);
-    return defaultValue;
-  }
-}
-
-export function updateLocalStorage(key, value) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (err) {
-    console.error(`Error writing ${key} to localStorage`, err);
-  }
-}
+import { syncWithLocalStorage, updateLocalStorage } from '../utils/localStorage';
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -36,10 +19,14 @@ const UserProfile = () => {
     if (!user) {
       console.warn("⚠️ User is undefined, redirecting...");
       navigate("/auth/login");
-      return;
+      return null; // Return null to avoid rendering the component
     }
 
     const fetchUserData = async () => {
+      // Initialize from localStorage first
+      setSavedArticles(syncWithLocalStorage(`savedArticles_${user._id}`, []));
+      setLikedArticles(syncWithLocalStorage(`likedArticles_${user._id}`, []));
+
       setIsLoading(true);
       setError(null);
 
@@ -90,21 +77,18 @@ const UserProfile = () => {
     fetchUserData();
   }, [user, navigate]);
 
-  useEffect(() => {
-    if (user) {
-      setSavedArticles(syncWithLocalStorage(`savedArticles_${user._id}`, []));
-      setLikedArticles(syncWithLocalStorage(`likedArticles_${user._id}`, []));
-    }
-  }, [user]);
-
   const toggleSave = (articleId) => {
     const isSaved = savedArticles.some(article => article._id === articleId);
     const updatedSaves = isSaved
       ? savedArticles.filter(article => article._id !== articleId)
-      : [...savedArticles, { _id: articleId }];
+      : [...savedArticles, { _id: articleId, title: `Article ${articleId}` }]; // Or fetch full article data
 
     setSavedArticles(updatedSaves);
-    updateLocalStorage(`savedArticles_${user._id}`, updatedSaves);
+
+    const userId = user?._id;
+    if (userId) {
+      updateLocalStorage(`savedArticles_${userId}`, updatedSaves);
+    }
   };
 
   const toggleLike = (articleId) => {
@@ -114,11 +98,18 @@ const UserProfile = () => {
       : [...likedArticles, { _id: articleId }];
 
     setLikedArticles(updatedLikes);
-    updateLocalStorage(`likedArticles_${user._id}`, updatedLikes);
+
+    const userId = user?._id;
+    if (userId) {
+      updateLocalStorage(`likedArticles_${userId}`, updatedLikes);
+    }
   };
 
+  // Ensure UserProfile is wrapped in AuthProvider
   if (!user) {
-    return null;
+    console.warn("⚠️ User is undefined, redirecting...");
+    navigate("/auth/login");
+    return null; // Return null to avoid rendering the component
   }
 
   // Ensure the URL id matches our user id

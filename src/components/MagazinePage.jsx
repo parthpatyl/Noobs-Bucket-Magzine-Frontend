@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ChevronLeft, ChevronRight, BookOpen, Search, Heart, Share2, Bookmark } from 'lucide-react';
 import CategoryFilter from './CategoryFilter';
-import EditionCatalog from './EditionCatalog';
 import FeaturedArticle from './FeaturedArticle';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
 import { parseISO, format } from "date-fns";
+import { syncWithLocalStorage, updateLocalStorage } from '../utils/localStorage';
 
 const formatArticleDate = (rawDate) => {
   if (!rawDate) return "No date available";
   try {
     let dateObj;
-    
+
     // Handle MongoDB Extended JSON format: { "$date": "2025-01-11T00:00:00.000Z" }
     if (typeof rawDate === "object" && rawDate.$date) {
       dateObj = new Date(rawDate.$date);
@@ -38,24 +38,6 @@ const formatArticleDate = (rawDate) => {
   }
 };
 
-export function syncWithLocalStorage(key, defaultValue) {
-  try {
-    const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : defaultValue;
-  } catch (err) {
-    console.error(`Error loading ${key} from localStorage`, err);
-    return defaultValue;
-  }
-}
-
-export function updateLocalStorage(key, value) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (err) {
-    console.error(`Error writing ${key} to localStorage`, err);
-  }
-}
-
 const MagazinePage = () => {
   const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,7 +45,6 @@ const MagazinePage = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [savedArticles, setSavedArticles] = useState([]);
   const [likedArticles, setLikedArticles] = useState([]);
-  const [isEditionMinimized, setIsEditionMinimized] = useState(false);
   const itemsPerPage = 8;
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useContext(AuthContext);
@@ -75,10 +56,8 @@ const MagazinePage = () => {
   // Fetch articles from the backend (ensure backend returns lean JSON)
   const fetchArticles = async () => {
     try {
-      console.log("📡 Fetching articles from:", `${API_BASE_URL}/api/articles/get`);
       const response = await fetch(`${API_BASE_URL}/api/articles/get`);
       const data = await response.json();
-      console.log("✅ API Response:", data);
       if (!response.ok) throw new Error(data.message || "Failed to fetch articles");
       setArticles(data);
     } catch (error) {
@@ -95,12 +74,9 @@ const MagazinePage = () => {
     if (user) {
       setSavedArticles(user.savedArticles || []);
       setLikedArticles(user.likedArticles || []);
-      console.log("Loaded user data:", {
-        savedArticles: user.savedArticles || [],
-        likedArticles: user.likedArticles || []
-      });
     }
   }, [user]);
+
 
   // Derive a list of unique categories from articles
   const categories = [...new Set(articles.map(article => article.category))];
@@ -136,7 +112,7 @@ const MagazinePage = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to update saved status");
       setSavedArticles(data.savedArticles);
-      updateLocalStorage(`savedArticles_${user._id}`, updatedSaves);
+      syncWithLocalStorage(`savedArticles_${user._id}`, data.savedArticles);
     } catch (error) {
       console.error("❌ Error updating saved articles:", error);
       // Optionally revert state on error
@@ -160,7 +136,7 @@ const MagazinePage = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to update like status");
       setLikedArticles(data.likedArticles);
-      updateLocalStorage(`likedArticles_${user._id}`, updatedLikes);
+      syncWithLocalStorage(`likedArticles_${user._id}`, data.likedArticles);
     } catch (error) {
       console.error("❌ Error updating liked articles:", error);
       // Optionally revert state on error
@@ -245,11 +221,6 @@ const MagazinePage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-3">
             <div className="sticky top-4">
-              <EditionCatalog
-                articles={articles}
-                isMinimized={isEditionMinimized}
-                onToggleMinimize={() => setIsEditionMinimized(!isEditionMinimized)}
-              />
             </div>
           </div>
 
@@ -273,17 +244,15 @@ const MagazinePage = () => {
                       <div className="flex space-x-2">
                         <button
                           onClick={() => toggleLike(article._id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                            likedArticles.some(id => id === article._id) ? "text-red-500" : "text-gray-500"
-                          }`}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${likedArticles.some(id => id === article._id) ? "text-red-500" : "text-gray-500"
+                            }`}
                         >
                           <Heart className="h-5 w-5" fill={likedArticles.some(id => id === article._id) ? "currentColor" : "none"} />
                         </button>
                         <button
                           onClick={() => toggleSave(article._id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                            savedArticles.some(id => id === article._id) ? "text-blue-500" : "text-gray-500"
-                          }`}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${savedArticles.some(id => id === article._id) ? "text-blue-500" : "text-gray-500"
+                            }`}
                         >
                           <Bookmark className="h-5 w-5" fill={savedArticles.some(id => id === article._id) ? "currentColor" : "none"} />
                         </button>

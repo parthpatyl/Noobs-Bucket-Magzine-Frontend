@@ -12,6 +12,11 @@ const LandingPage = () => {
     navigate('/magazine');
   };
 
+  // Ensure LandingPage is wrapped in AuthProvider
+  if (!isAuthenticated) {
+    console.warn("⚠️ User is not authenticated.");
+  }
+
   return (
     <div className="min-h-screen bg-[url(src/assets/img.svg)]">  
     <div className="max-w-4xl mx-auto px-4 py-16 text-center">

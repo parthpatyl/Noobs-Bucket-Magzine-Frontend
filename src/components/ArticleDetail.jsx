@@ -5,24 +5,8 @@ import { AuthContext } from "../context/AuthContext";
 import { API_BASE_URL } from "../utils/api";
 import axios from "axios";
 import { parseISO, format } from "date-fns";
+import { syncWithLocalStorage, updateLocalStorage } from '../utils/localStorage';
 
-export function syncWithLocalStorage(key, defaultValue) {
-  try {
-    const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : defaultValue;
-  } catch (err) {
-    console.error(`Error loading ${key} from localStorage`, err);
-    return defaultValue;
-  }
-}
-
-export function updateLocalStorage(key, value) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (err) {
-    console.error(`Error writing ${key} to localStorage`, err);
-  }
-}
 
 const ArticleDetail = () => {
   const { id } = useParams();
@@ -39,8 +23,8 @@ const ArticleDetail = () => {
   // Sync local state with user data
   useEffect(() => {
     if (user) {
-      const liked = syncWithLocalStorage(`likedArticles_${user?._id}`, []);
-      const saved = syncWithLocalStorage(`savedArticles_${user?._id}`, []);
+      const liked = syncWithLocalStorage(`likedArticles_${user._id}`, []);
+      const saved = syncWithLocalStorage(`savedArticles_${user._id}`, []);
       setLikedArticles(liked);
       setSavedArticles(saved);
     }
@@ -117,15 +101,17 @@ const ArticleDetail = () => {
   // Toggle like status
   const toggleLike = async (articleId) => {
     if (!user) return;
-    const updatedLikes = likedArticles.includes(articleId)
+    const isLiked = likedArticles.includes(articleId);
+    const updatedLikes = isLiked
       ? likedArticles.filter(id => id !== articleId)
       : [...likedArticles, articleId];
     setLikedArticles(updatedLikes);
-    updateLocalStorage(`likedArticles_${user._id}`, updatedLikes);
+
     try {
       const response = await axios.post(`${API_BASE_URL}/api/articles/like/${articleId}`, { userId: user._id });
       if (response.status === 200) {
         setLikedArticles(response.data.likedArticles);
+        updateLocalStorage(`likedArticles_${user._id}`, response.data.likedArticles);
       } else {
         throw new Error("Failed to update like status");
       }
@@ -138,15 +124,17 @@ const ArticleDetail = () => {
   // Toggle save status
   const toggleSave = async (articleId) => {
     if (!user) return;
-    const updatedSaves = savedArticles.includes(articleId)
+    const isSaved = savedArticles.includes(articleId);
+    const updatedSaves = isSaved
       ? savedArticles.filter(id => id !== articleId)
       : [...savedArticles, articleId];
     setSavedArticles(updatedSaves);
-    updateLocalStorage(`savedArticles_${user._id}`, updatedSaves);
+
     try {
       const response = await axios.post(`${API_BASE_URL}/api/articles/save/${articleId}`, { userId: user._id });
       if (response.status === 200) {
         setSavedArticles(response.data.savedArticles);
+        updateLocalStorage(`savedArticles_${user._id}`, response.data.savedArticles);
       } else {
         throw new Error("Failed to update saved status");
       }
