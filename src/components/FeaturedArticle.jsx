@@ -23,9 +23,8 @@ const FeaturedArticle = ({ articles, interval = 5000 }) => {
 
   return (
     <div
-      className={`mb-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transform transition-transform duration-300 ${
-        isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
-      }`}
+      className={`mb-8 bg-brand-surface rounded-xl shadow-lg overflow-hidden transform transition-all duration-500 border border-white/5 hover:shadow-glow ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+        }`}
     >
       <div className="relative h-96">
         <img
@@ -33,13 +32,14 @@ const FeaturedArticle = ({ articles, interval = 5000 }) => {
           alt="Featured Article"
           className="w-full h-full object-cover"
         />
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
-          <span className="text-blue-400 font-semibold">Featured</span>
-          <h2 className="text-4xl font-bold text-white mt-2">{currentArticle.title}</h2>
-          <p className="text-gray-200 mt-2">{currentArticle.excerpt}</p>
-          <div className="flex items-center space-x-4 mt-4">
-            <span className="text-gray-300">{currentArticle.readTime}</span>
-            <span className="text-gray-300">{formatDate(currentArticle.date)}</span>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-bg via-brand-bg/80 to-transparent p-8">
+          <span className="text-brand-primary font-bold tracking-wider uppercase text-sm mb-2 block">Featured Story</span>
+          <h2 className="text-4xl font-extrabold text-white mt-2 leading-tight">{currentArticle.title}</h2>
+          <p className="text-gray-300 mt-3 text-lg max-w-2xl">{currentArticle.excerpt}</p>
+          <div className="flex items-center space-x-4 mt-6 text-sm font-medium">
+            <span className="text-brand-secondary">{currentArticle.readTime}</span>
+            <span className="text-gray-400">•</span>
+            <span className="text-gray-400">{formatDate(currentArticle.date)}</span>
           </div>
         </div>
       </div>

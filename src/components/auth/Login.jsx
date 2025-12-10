@@ -20,36 +20,40 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 dark:from-gray-900 dark:via-fuchsia-800 dark:to-gray-700">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-brand-bg relative overflow-hidden">
+      {/* Background Glow Effects */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-brand-primary/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-secondary/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+
+      <div className="bg-brand-surface p-8 rounded-2xl shadow-2xl w-96 border border-white/10 relative z-10">
+        <h2 className="text-3xl font-bold mb-6 text-brand-text text-center">Welcome Back</h2>
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+            <label className="block text-sm font-medium text-brand-muted mb-1">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 p-2 w-full border rounded-lg dark:bg-gray-700 dark:text-white"
+              className="mt-1 p-3 w-full bg-brand-bg border border-white/10 rounded-lg text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
               required
             />
           </div>
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+            <label className="block text-sm font-medium text-brand-muted mb-1">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 p-2 w-full border rounded-lg dark:bg-gray-700 dark:text-white"
+              className="mt-1 p-3 w-full bg-brand-bg border border-white/10 rounded-lg text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
               required
             />
           </div>
-          <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">
+          <button type="submit" className="w-full bg-brand-primary text-white p-3 rounded-lg hover:bg-orange-600 transition-all font-bold shadow-glow hover:shadow-glow-hover">
             Login
           </button>
         </form>
-        <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
-          Don't have an account? <Link to="/auth/register" className="text-green-500">Register</Link>
+        <p className="mt-6 text-center text-brand-muted">
+          Don't have an account? <Link to="/auth/register" className="text-brand-secondary hover:text-white transition-colors font-semibold">Register</Link>
         </p>
       </div>
     </div>

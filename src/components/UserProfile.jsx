@@ -19,15 +19,15 @@ const UserProfile = () => {
   // Ensure the URL id matches our user id
   if (user._id !== id) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg text-center">
-          <span className="text-6xl mb-4">😞</span>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+      <div className="min-h-screen bg-brand-bg flex items-center justify-center">
+        <div className="bg-brand-surface p-8 rounded-lg shadow-lg text-center border border-white/10">
+          <span className="text-6xl mb-4 block">😞</span>
+          <h1 className="text-2xl font-bold text-brand-text mb-4">
             User Not Found
           </h1>
           <button
             onClick={() => navigate("/magazine")}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-2 bg-brand-primary text-white rounded-lg hover:bg-orange-600 transition-colors shadow-glow"
           >
             Return Home
           </button>
@@ -45,13 +45,13 @@ const UserProfile = () => {
       return (
         <div
           key={articleId}
-          className="cursor-pointer bg-white dark:bg-blue-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-100"
+          className="cursor-pointer bg-brand-bg rounded-lg shadow-md p-4 hover:shadow-glow transition-all duration-300 border border-white/5 group"
           tabIndex={0}
           onKeyDown={(e) => e.key === "Enter" && navigate(`/article/${articleId}`)}
         >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
+          <h3 className="text-lg font-semibold text-brand-text group-hover:text-brand-primary transition-colors">{title}</h3>
           {article.excerpt && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            <p className="text-sm text-brand-muted mt-2">
               {article.excerpt}
             </p>
           )}
@@ -59,7 +59,7 @@ const UserProfile = () => {
           <div className="flex justify-end mt-3">
             <button
               onClick={() => navigate(`/article/${articleId}`)}
-              className="w-10 h-10 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 font-bold"
+              className="w-10 h-10 bg-brand-primary text-white rounded-full hover:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-300 font-bold shadow-glow"
             >
               GO
             </button>
@@ -70,61 +70,61 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
+    <div className="min-h-screen bg-brand-bg p-6 text-brand-text">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-brand-surface rounded-xl shadow-lg overflow-hidden border border-white/10">
           {/* Header Section */}
-          <div className="bg-blue-600 p-6">
+          <div className="bg-gradient-to-r from-brand-primary to-brand-secondary p-6">
             <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center">
-                <span className="text-2xl font-bold text-blue-600">
+              <div className="w-20 h-20 rounded-full bg-brand-surface flex items-center justify-center border-4 border-white/20">
+                <span className="text-3xl font-bold text-brand-primary">
                   {user.name && user.name[0] ? user.name[0].toUpperCase() : '?'}
                 </span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">{user.name}</h1>
-                <p className="text-blue-100">{user.email}</p>
+                <h1 className="text-3xl font-bold text-white">{user.name}</h1>
+                <p className="text-white/80">{user.email}</p>
               </div>
             </div>
           </div>
 
           {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-2">
+            <div className="bg-brand-bg p-4 rounded-lg border border-white/5">
+              <h3 className="text-sm font-semibold text-brand-muted mb-2">
                 Saved Articles
               </h3>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+              <p className="text-3xl font-bold text-brand-primary">
                 {savedArticles.length}
               </p>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-2">
+            <div className="bg-brand-bg p-4 rounded-lg border border-white/5">
+              <h3 className="text-sm font-semibold text-brand-muted mb-2">
                 Liked Articles
               </h3>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+              <p className="text-3xl font-bold text-brand-secondary">
                 {likedArticles.length}
               </p>
             </div>
           </div>
 
           {/* Tab Navigation and Articles List */}
-          <div className="p-6 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex mb-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-t border-white/10">
+            <div className="flex mb-4 border-b border-white/10">
               <button
                 onClick={() => setActiveTab('saved')}
-                className={`px-4 py-2 ${activeTab === 'saved'
-                  ? 'border-b-2 border-blue-600 text-blue-600'
-                  : 'text-gray-500 dark:text-gray-400'
+                className={`px-4 py-2 transition-colors ${activeTab === 'saved'
+                  ? 'border-b-2 border-brand-primary text-brand-primary font-bold'
+                  : 'text-brand-muted hover:text-brand-text'
                   }`}
               >
                 Saved Articles
               </button>
               <button
                 onClick={() => setActiveTab('liked')}
-                className={`px-4 py-2 ${activeTab === 'liked'
-                  ? 'border-b-2 border-blue-600 text-blue-600'
-                  : 'text-gray-500 dark:text-gray-400'
+                className={`px-4 py-2 transition-colors ${activeTab === 'liked'
+                  ? 'border-b-2 border-brand-secondary text-brand-secondary font-bold'
+                  : 'text-brand-muted hover:text-brand-text'
                   }`}
               >
                 Liked Articles
@@ -141,20 +141,20 @@ const UserProfile = () => {
           </div>
 
           {/* Account Details */}
-          <div className="p-6 border-t border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold mb-4 dark:text-white">Account Details</h2>
+          <div className="p-6 border-t border-white/10">
+            <h2 className="text-xl font-semibold mb-4 text-brand-text">Account Details</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-gray-300">Name:</span>
-                <span className="font-medium dark:text-white">{user.name}</span>
+                <span className="text-brand-muted">Name:</span>
+                <span className="font-medium text-brand-text">{user.name}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-gray-300">Email:</span>
-                <span className="font-medium dark:text-white">{user.email}</span>
+                <span className="text-brand-muted">Email:</span>
+                <span className="font-medium text-brand-text">{user.email}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-gray-300">Member Since:</span>
-                <span className="font-medium dark:text-white">
+                <span className="text-brand-muted">Member Since:</span>
+                <span className="font-medium text-brand-text">
                   {user.memberSince ? new Date(user.memberSince).toLocaleDateString() : 'N/A'}
                 </span>
               </div>
@@ -162,10 +162,10 @@ const UserProfile = () => {
           </div>
 
           {/* Refresh and Navigation */}
-          <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-between gap-4">
+          <div className="p-6 border-t border-white/10 flex justify-between gap-4">
             <button
               onClick={() => navigate("/magazine")}
-              className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              className="px-6 py-2 bg-brand-bg text-brand-text rounded-lg hover:bg-white/10 transition-colors border border-white/5"
             >
               Back to Articles
             </button>

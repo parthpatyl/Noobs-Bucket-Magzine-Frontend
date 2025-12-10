@@ -127,62 +127,44 @@ const ArticleDetail = () => {
   if (error || !article) return <h1>Article not found.</h1>;
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-10">
+    <div className="min-h-screen bg-brand-bg text-brand-text">
+      <header className="bg-brand-surface shadow-lg sticky top-0 z-50 border-b border-white/5">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
-          <button onClick={() => navigate("/magazine")} className="flex items-center text-blue-600 hover:text-blue-800">
+          <button onClick={() => navigate("/magazine")} className="flex items-center text-brand-primary hover:text-brand-secondary transition-colors">
             <ArrowLeft className="h-5 w-5 mr-2" /> Back to Articles
           </button>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Article Detail</h1>
+          <h1 className="text-2xl font-bold text-brand-text">Article Detail</h1>
         </div>
       </header>
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-12 gap-5">
-          <div className="col-span-3">
-            <h2 className="text-xl font-bold mb-4 dark:text-white">Categories</h2>
-            <div className="space-y-6">
-              {Object.entries(filteredCategories).map(([categoryName, data]) => (
-                <button
-                  key={categoryName}
-                  onClick={() => handleCategoryClick(categoryName)}
-                  className={`w-full text-left py-2 px-3 rounded transition-colors ${article.category === categoryName
-                    ? "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400"
-                    : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
-                    }`}
-                >
-                  <div className="flex justify-between items-center">
-                    <span>{categoryName}</span>
-                    <span className="text-sm text-gray-500">{data.count}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="col-span-9">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          {/* Categories Sidebar Removed for Focused Reading */}
+
+          <div className="col-span-12 lg:col-span-8 lg:col-start-3">
+            <div className="bg-brand-surface rounded-xl shadow-lg overflow-hidden border border-white/5">
               <img src={article.image && article.image[0] ? article.image[0] : ''} alt={article.title} className="w-full h-72 object-cover" />
               <div className="p-8">
                 <div className="mb-6">
-                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">{article.category}</span>
-                  <h1 className="text-3xl font-bold mt-2 dark:text-white">{article.title}</h1>
+                  <span className="text-sm font-semibold text-brand-primary">{article.category}</span>
+                  <h1 className="text-4xl font-extrabold mt-2 text-brand-text leading-tight">{article.title}</h1>
                   <div className="flex space-x-2 mt-4">
                     <button
                       onClick={() => toggleLike(article)}
-                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isLiked ? "text-red-500" : "text-gray-500"
+                      className={`p-2 rounded-full hover:bg-white/10 transition-colors ${isLiked ? "text-brand-accent" : "text-gray-500"
                         }`}
                     >
                       <Heart className="h-5 w-5" fill={isLiked ? "currentColor" : "none"} />
                     </button>
                     <button
                       onClick={() => toggleSave(article)}
-                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isSaved ? "text-blue-500" : "text-gray-500"
+                      className={`p-2 rounded-full hover:bg-white/10 transition-colors ${isSaved ? "text-brand-secondary" : "text-gray-500"
                         }`}
                     >
                       <Bookmark className="h-5 w-5" fill={isSaved ? "currentColor" : "none"} />
                     </button>
                     <button
                       onClick={() => shareArticle(article)}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                      className="p-2 rounded-full hover:bg-white/10 text-gray-500 hover:text-brand-text transition-colors"
                     >
                       <Share2 className="h-5 w-5" />
                     </button>
@@ -194,10 +176,10 @@ const ArticleDetail = () => {
                     <span>{article.readtime}</span>
                   </div>
                 </div>
-                <div className="prose dark:prose-invert max-w-none">
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{article.excerpt}</p>
+                <div className="prose prose-invert max-w-none">
+                  <p className="text-brand-muted leading-relaxed text-lg">{article.excerpt}</p>
                   {article.content && (
-                    <div className="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+                    <div className="mt-6 text-brand-muted leading-relaxed">
                       {article.content}
                     </div>
                   )}
