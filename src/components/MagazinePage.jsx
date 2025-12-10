@@ -43,6 +43,7 @@ const MagazinePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState(null);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
   const itemsPerPage = 8;
   const navigate = useNavigate();
@@ -119,13 +120,13 @@ const MagazinePage = () => {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => navigate(`/user/${user._id}`)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="px-4 py-2 bg-brand-primary text-white rounded-xl hover:bg-orange-600 shadow-glow transition-all"
                   >
                     Profile
                   </button>
                   <button
                     onClick={logout}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                    className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 shadow-glow transition-all"
                   >
                     Logout
                   </button>
@@ -158,13 +159,23 @@ const MagazinePage = () => {
           <div className="lg:col-span-2">
             <div className="sticky top-24">
               <div className="bg-brand-surface rounded-xl shadow-lg p-6 border border-white/5">
-                <h2 className="text-xl font-bold mb-4 text-brand-text border-b border-white/10 pb-2">Categories</h2>
-                <CategoryFilter
-                  categories={categories}
-                  activeCategory={activeCategory}
-                  onCategoryChange={setActiveCategory}
-                  vertical={true}
-                />
+                <div
+                  className="flex justify-between items-center cursor-pointer lg:cursor-default mb-4 lg:mb-4"
+                  onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                >
+                  <h2 className="text-xl font-bold text-brand-text">Categories</h2>
+                  <ChevronRight className={`h-5 w-5 lg:hidden transform transition-transform ${isCategoryOpen ? 'rotate-90' : ''}`} />
+                </div>
+
+                <div className={`lg:block ${isCategoryOpen ? 'block' : 'hidden'} transition-all duration-300`}>
+                  <div className="border-b border-white/10 mb-4"></div>
+                  <CategoryFilter
+                    categories={categories}
+                    activeCategory={activeCategory}
+                    onCategoryChange={setActiveCategory}
+                    vertical={true}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -190,21 +201,21 @@ const MagazinePage = () => {
                         <div className="flex space-x-2">
                           <button
                             onClick={() => toggleLike(article)}
-                            className={`p-2 rounded-full hover:bg-white/10 transition-colors ${likedArticles.some(item => (item._id || item) === article._id) ? "text-brand-accent" : "text-gray-500"
+                            className={`p-2 rounded-xl hover:bg-white/10 transition-colors ${likedArticles.some(item => (item._id || item) === article._id) ? "text-brand-accent" : "text-gray-500"
                               }`}
                           >
                             <Heart className="h-5 w-5" fill={likedArticles.some(item => (item._id || item) === article._id) ? "currentColor" : "none"} />
                           </button>
                           <button
                             onClick={() => toggleSave(article)}
-                            className={`p-2 rounded-full hover:bg-white/10 transition-colors ${savedArticles.some(item => (item._id || item) === article._id) ? "text-brand-secondary" : "text-gray-500"
+                            className={`p-2 rounded-xl hover:bg-white/10 transition-colors ${savedArticles.some(item => (item._id || item) === article._id) ? "text-brand-secondary" : "text-gray-500"
                               }`}
                           >
                             <Bookmark className="h-5 w-5" fill={savedArticles.some(item => (item._id || item) === article._id) ? "currentColor" : "none"} />
                           </button>
                           <button
                             onClick={() => shareArticle(article)}
-                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
                           >
                             <Share2 className="h-5 w-5" />
                           </button>

@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Bookmark, Heart, Calendar } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 
@@ -45,23 +46,23 @@ const UserProfile = () => {
       return (
         <div
           key={articleId}
-          className="cursor-pointer bg-brand-bg rounded-lg shadow-md p-4 hover:shadow-glow transition-all duration-300 border border-white/5 group"
+          className="cursor-pointer bg-brand-bg rounded-xl shadow-lg p-6 hover:shadow-glow transition-all duration-300 border border-white/5 group hover:-translate-y-1"
           tabIndex={0}
           onKeyDown={(e) => e.key === "Enter" && navigate(`/article/${articleId}`)}
         >
-          <h3 className="text-lg font-semibold text-brand-text group-hover:text-brand-primary transition-colors">{title}</h3>
+          <h3 className="text-xl font-bold text-brand-text group-hover:text-brand-primary transition-colors mb-2">{title}</h3>
           {article.excerpt && (
-            <p className="text-sm text-brand-muted mt-2">
+            <p className="text-sm text-brand-muted line-clamp-2">
               {article.excerpt}
             </p>
           )}
 
-          <div className="flex justify-end mt-3">
+          <div className="flex justify-end mt-4">
             <button
-              onClick={() => navigate(`/article/${articleId}`)}
-              className="w-10 h-10 bg-brand-primary text-white rounded-full hover:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-300 font-bold shadow-glow"
+              onClick={(e) => { e.stopPropagation(); navigate(`/article/${articleId}`); }}
+              className="px-4 py-2 bg-brand-primary text-white rounded-xl hover:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-300 font-bold shadow-glow text-sm"
             >
-              GO
+              Read Article
             </button>
           </div>
         </div>
@@ -70,105 +71,116 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg p-6 text-brand-text">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-brand-surface rounded-xl shadow-lg overflow-hidden border border-white/10">
-          {/* Header Section */}
-          <div className="bg-gradient-to-r from-brand-primary to-brand-secondary p-6">
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-full bg-brand-surface flex items-center justify-center border-4 border-white/20">
-                <span className="text-3xl font-bold text-brand-primary">
+    <div className="min-h-screen bg-brand-bg text-brand-text">
+      {/* Header Banner */}
+      <div className="h-64 bg-gradient-to-r from-brand-primary via-orange-500 to-brand-secondary relative">
+        <div className="absolute inset-0 bg-black/20"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 -mt-32 relative z-10">
+        <div className="bg-brand-surface rounded-2xl shadow-2xl overflow-hidden border border-white/10">
+          <div className="p-8">
+            <div className="flex flex-col md:flex-row items-center md:items-end gap-6 mb-8">
+              <div className="w-32 h-32 rounded-2xl bg-brand-surface flex items-center justify-center border-4 border-brand-surface shadow-xl">
+                <span className="text-5xl font-bold text-brand-primary">
                   {user.name && user.name[0] ? user.name[0].toUpperCase() : '?'}
                 </span>
               </div>
-              <div>
-                <h1 className="text-3xl font-bold text-white">{user.name}</h1>
-                <p className="text-white/80">{user.email}</p>
+              <div className="text-center md:text-left flex-1">
+                <h1 className="text-4xl font-bold text-white mb-2">{user.name}</h1>
+                <p className="text-brand-muted text-lg">{user.email}</p>
+              </div>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => navigate("/magazine")}
+                  className="px-6 py-3 bg-brand-bg text-brand-text rounded-xl hover:bg-white/10 transition-colors border border-white/10 font-medium"
+                >
+                  Back to Articles
+                </button>
               </div>
             </div>
-          </div>
 
-          {/* Stats Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-            <div className="bg-brand-bg p-4 rounded-lg border border-white/5">
-              <h3 className="text-sm font-semibold text-brand-muted mb-2">
-                Saved Articles
-              </h3>
-              <p className="text-3xl font-bold text-brand-primary">
-                {savedArticles.length}
-              </p>
-            </div>
-            <div className="bg-brand-bg p-4 rounded-lg border border-white/5">
-              <h3 className="text-sm font-semibold text-brand-muted mb-2">
-                Liked Articles
-              </h3>
-              <p className="text-3xl font-bold text-brand-secondary">
-                {likedArticles.length}
-              </p>
-            </div>
-          </div>
-
-          {/* Tab Navigation and Articles List */}
-          <div className="p-6 border-t border-white/10">
-            <div className="flex mb-4 border-b border-white/10">
-              <button
-                onClick={() => setActiveTab('saved')}
-                className={`px-4 py-2 transition-colors ${activeTab === 'saved'
-                  ? 'border-b-2 border-brand-primary text-brand-primary font-bold'
-                  : 'text-brand-muted hover:text-brand-text'
-                  }`}
-              >
-                Saved Articles
-              </button>
-              <button
-                onClick={() => setActiveTab('liked')}
-                className={`px-4 py-2 transition-colors ${activeTab === 'liked'
-                  ? 'border-b-2 border-brand-secondary text-brand-secondary font-bold'
-                  : 'text-brand-muted hover:text-brand-text'
-                  }`}
-              >
-                Liked Articles
-              </button>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              <div className="bg-brand-bg p-6 rounded-xl border border-white/5 flex items-center gap-4">
+                <div className="p-3 bg-brand-primary/10 rounded-lg text-brand-primary">
+                  <Bookmark className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-brand-muted text-sm">Saved Articles</p>
+                  <p className="text-2xl font-bold text-brand-text">{savedArticles.length}</p>
+                </div>
+              </div>
+              <div className="bg-brand-bg p-6 rounded-xl border border-white/5 flex items-center gap-4">
+                <div className="p-3 bg-brand-secondary/10 rounded-lg text-brand-secondary">
+                  <Heart className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-brand-muted text-sm">Liked Articles</p>
+                  <p className="text-2xl font-bold text-brand-text">{likedArticles.length}</p>
+                </div>
+              </div>
+              <div className="bg-brand-bg p-6 rounded-xl border border-white/5 flex items-center gap-4">
+                <div className="p-3 bg-blue-500/10 rounded-lg text-blue-500">
+                  <Calendar className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-brand-muted text-sm">Member Since</p>
+                  <p className="text-2xl font-bold text-brand-text">
+                    {user.memberSince ? new Date(user.memberSince).getFullYear() : 'N/A'}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-4">
+            {/* Tabs */}
+            <div className="border-b border-white/10 mb-8">
+              <div className="flex gap-8">
+                <button
+                  onClick={() => setActiveTab('saved')}
+                  className={`pb-4 text-lg font-medium transition-all relative ${activeTab === 'saved'
+                    ? 'text-brand-primary'
+                    : 'text-brand-muted hover:text-brand-text'
+                    }`}
+                >
+                  Saved Articles
+                  {activeTab === 'saved' && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-primary rounded-t-full"></div>
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab('liked')}
+                  className={`pb-4 text-lg font-medium transition-all relative ${activeTab === 'liked'
+                    ? 'text-brand-primary'
+                    : 'text-brand-muted hover:text-brand-text'
+                    }`}
+                >
+                  Liked Articles
+                  {activeTab === 'liked' && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-primary rounded-t-full"></div>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Content Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {activeTab === 'saved' ? (
-                savedArticles.length > 0 ? renderArticles(savedArticles) : <p>No saved articles</p>
+                savedArticles.length > 0 ? renderArticles(savedArticles) : (
+                  <div className="col-span-full text-center py-12 text-brand-muted bg-brand-bg rounded-xl border border-white/5">
+                    <Bookmark className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                    <p>No saved articles yet.</p>
+                  </div>
+                )
               ) : (
-                likedArticles.length > 0 ? renderArticles(likedArticles) : <p>No liked articles</p>
+                likedArticles.length > 0 ? renderArticles(likedArticles) : (
+                  <div className="col-span-full text-center py-12 text-brand-muted bg-brand-bg rounded-xl border border-white/5">
+                    <Heart className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                    <p>No liked articles yet.</p>
+                  </div>
+                )
               )}
             </div>
-          </div>
-
-          {/* Account Details */}
-          <div className="p-6 border-t border-white/10">
-            <h2 className="text-xl font-semibold mb-4 text-brand-text">Account Details</h2>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-brand-muted">Name:</span>
-                <span className="font-medium text-brand-text">{user.name}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-brand-muted">Email:</span>
-                <span className="font-medium text-brand-text">{user.email}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-brand-muted">Member Since:</span>
-                <span className="font-medium text-brand-text">
-                  {user.memberSince ? new Date(user.memberSince).toLocaleDateString() : 'N/A'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Refresh and Navigation */}
-          <div className="p-6 border-t border-white/10 flex justify-between gap-4">
-            <button
-              onClick={() => navigate("/magazine")}
-              className="px-6 py-2 bg-brand-bg text-brand-text rounded-lg hover:bg-white/10 transition-colors border border-white/5"
-            >
-              Back to Articles
-            </button>
           </div>
         </div>
       </div>

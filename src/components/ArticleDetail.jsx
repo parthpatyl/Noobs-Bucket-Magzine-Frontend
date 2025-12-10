@@ -150,21 +150,21 @@ const ArticleDetail = () => {
                   <div className="flex space-x-2 mt-4">
                     <button
                       onClick={() => toggleLike(article)}
-                      className={`p-2 rounded-full hover:bg-white/10 transition-colors ${isLiked ? "text-brand-accent" : "text-gray-500"
+                      className={`p-2 rounded-xl hover:bg-white/10 transition-colors ${isLiked ? "text-brand-accent" : "text-gray-500"
                         }`}
                     >
                       <Heart className="h-5 w-5" fill={isLiked ? "currentColor" : "none"} />
                     </button>
                     <button
                       onClick={() => toggleSave(article)}
-                      className={`p-2 rounded-full hover:bg-white/10 transition-colors ${isSaved ? "text-brand-secondary" : "text-gray-500"
+                      className={`p-2 rounded-xl hover:bg-white/10 transition-colors ${isSaved ? "text-brand-secondary" : "text-gray-500"
                         }`}
                     >
                       <Bookmark className="h-5 w-5" fill={isSaved ? "currentColor" : "none"} />
                     </button>
                     <button
                       onClick={() => shareArticle(article)}
-                      className="p-2 rounded-full hover:bg-white/10 text-gray-500 hover:text-brand-text transition-colors"
+                      className="p-2 rounded-xl hover:bg-white/10 text-gray-500 hover:text-brand-text transition-colors"
                     >
                       <Share2 className="h-5 w-5" />
                     </button>

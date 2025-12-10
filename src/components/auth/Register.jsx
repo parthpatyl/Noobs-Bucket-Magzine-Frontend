@@ -77,7 +77,7 @@ const Register = () => {
               required
             />
           </div>
-          <button type="submit" className="w-full bg-brand-primary text-white p-3 rounded-lg hover:bg-orange-600 transition-all font-bold shadow-glow hover:shadow-glow-hover">
+          <button type="submit" className="w-full bg-brand-primary text-white p-3 rounded-xl hover:bg-orange-600 transition-all font-bold shadow-glow hover:shadow-glow-hover">
             Register
           </button>
         </form>

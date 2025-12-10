@@ -5,7 +5,7 @@ const CategoryFilter = ({ categories, activeCategory, onCategoryChange, vertical
     <div className={`flex ${vertical ? 'flex-col items-stretch' : 'flex-wrap'} gap-2 mb-6`}>
       <button
         onClick={() => onCategoryChange(null)}
-        className={`px-4 py-2 rounded-full transition-all duration-300 ${!activeCategory
+        className={`px-4 py-2 rounded-xl transition-all duration-300 ${!activeCategory
           ? 'bg-brand-primary text-white shadow-glow'
           : 'bg-brand-surface text-brand-text hover:bg-white/10 border border-white/5'
           }`}
@@ -16,7 +16,7 @@ const CategoryFilter = ({ categories, activeCategory, onCategoryChange, vertical
         <button
           key={category}
           onClick={() => onCategoryChange(category)}
-          className={`px-4 py-2 rounded-full transition-all duration-300 ${activeCategory === category
+          className={`px-4 py-2 rounded-xl transition-all duration-300 ${activeCategory === category
             ? 'bg-brand-primary text-white shadow-glow'
             : 'bg-brand-surface text-brand-text hover:bg-white/10 border border-white/5'
             }`}

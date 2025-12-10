@@ -45,7 +45,7 @@ const LandingPage = () => {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <div className="bg-brand-surface border border-white/10 rounded-2xl shadow-2xl p-12 transform transition-all hover:scale-[1.02] hover:shadow-glow duration-500">
             <div className="flex justify-center mb-8">
-              <div className="p-4 bg-brand-bg rounded-full shadow-inner">
+              <div className="p-4 bg-brand-bg rounded-xl shadow-inner">
                 <BookOpen className="h-16 w-16 text-brand-primary animate-pulse" />
               </div>
             </div>
