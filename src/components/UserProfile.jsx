@@ -1,109 +1,13 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { API_BASE_URL } from '../utils/api';
-import { syncWithLocalStorage, updateLocalStorage } from '../utils/localStorage';
+
 
 const UserProfile = () => {
   const { id } = useParams();
-  const { user } = useContext(AuthContext);
+  const { user, likedArticles, savedArticles } = useContext(AuthContext);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('saved');
-  const [savedArticles, setSavedArticles] = useState([]);
-  const [likedArticles, setLikedArticles] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Fetch user data from the backend (populated with articles)
-  useEffect(() => {
-    if (!user) {
-      console.warn("⚠️ User is undefined, redirecting...");
-      navigate("/auth/login");
-      return null; // Return null to avoid rendering the component
-    }
-
-    const fetchUserData = async () => {
-      // Initialize from localStorage first
-      setSavedArticles(syncWithLocalStorage(`savedArticles_${user._id}`, []));
-      setLikedArticles(syncWithLocalStorage(`likedArticles_${user._id}`, []));
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        console.log(`🔍 Fetching user data from: ${API_BASE_URL}/auth/user/${user._id}`);
-        const response = await fetch(`${API_BASE_URL}/auth/user/${user._id}`);
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          console.error(`❌ API returned non-JSON content: ${contentType}`);
-          const text = await response.text();
-          console.error(`Response body (first 100 chars): ${text.substring(0, 100)}...`);
-          throw new Error('API returned non-JSON response');
-        }
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          console.error(`❌ API error: ${data.message || response.statusText}`);
-          throw new Error(data.message || 'Failed to fetch user data');
-        }
-
-        // Ensure we have full article objects. If not, log a warning.
-        if (data.user.savedArticles && data.user.savedArticles.length > 0) {
-          if (typeof data.user.savedArticles[0] !== 'object') {
-            console.warn("Saved articles appear to be IDs only.");
-          }
-        }
-        if (data.user.likedArticles && data.user.likedArticles.length > 0) {
-          if (typeof data.user.likedArticles[0] !== 'object') {
-            console.warn("Liked articles appear to be IDs only.");
-          }
-        }
-
-        setSavedArticles(data.user.savedArticles || []);
-        setLikedArticles(data.user.likedArticles || []);
-        console.log("✅ User data fetched successfully:", {
-          savedArticles: data.user.savedArticles || [],
-          likedArticles: data.user.likedArticles || []
-        });
-      } catch (error) {
-        console.error("❌ Error fetching user data:", error);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [user, navigate]);
-
-  const toggleSave = (articleId) => {
-    const isSaved = savedArticles.some(article => article._id === articleId);
-    const updatedSaves = isSaved
-      ? savedArticles.filter(article => article._id !== articleId)
-      : [...savedArticles, { _id: articleId, title: `Article ${articleId}` }]; // Or fetch full article data
-
-    setSavedArticles(updatedSaves);
-
-    const userId = user?._id;
-    if (userId) {
-      updateLocalStorage(`savedArticles_${userId}`, updatedSaves);
-    }
-  };
-
-  const toggleLike = (articleId) => {
-    const isLiked = likedArticles.some(article => article._id === articleId);
-    const updatedLikes = isLiked
-      ? likedArticles.filter(article => article._id !== articleId)
-      : [...likedArticles, { _id: articleId }];
-
-    setLikedArticles(updatedLikes);
-
-    const userId = user?._id;
-    if (userId) {
-      updateLocalStorage(`likedArticles_${userId}`, updatedLikes);
-    }
-  };
 
   // Ensure UserProfile is wrapped in AuthProvider
   if (!user) {
@@ -191,7 +95,7 @@ const UserProfile = () => {
                 Saved Articles
               </h3>
               <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                {isLoading ? '...' : savedArticles.length}
+                {savedArticles.length}
               </p>
             </div>
             <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
@@ -199,7 +103,7 @@ const UserProfile = () => {
                 Liked Articles
               </h3>
               <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                {isLoading ? '...' : likedArticles.length}
+                {likedArticles.length}
               </p>
             </div>
           </div>
@@ -227,21 +131,13 @@ const UserProfile = () => {
               </button>
             </div>
 
-            {isLoading && (
-              <div className="flex justify-center items-center py-10">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
-              </div>
-            )}
-
-            {!isLoading && (
-              <div className="space-y-4">
-                {activeTab === 'saved' ? (
-                  savedArticles.length > 0 ? renderArticles(savedArticles) : <p>No saved articles</p>
-                ) : (
-                  likedArticles.length > 0 ? renderArticles(likedArticles) : <p>No liked articles</p>
-                )}
-              </div>
-            )}
+            <div className="space-y-4">
+              {activeTab === 'saved' ? (
+                savedArticles.length > 0 ? renderArticles(savedArticles) : <p>No saved articles</p>
+              ) : (
+                likedArticles.length > 0 ? renderArticles(likedArticles) : <p>No liked articles</p>
+              )}
+            </div>
           </div>
 
           {/* Account Details */}

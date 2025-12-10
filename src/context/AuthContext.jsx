@@ -23,26 +23,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, 500);
 
-  // Fetch user data from backend on mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        // Validate user data structure
-        if (parsedUser && typeof parsedUser === 'object' && parsedUser._id) {
-          setUser(parsedUser);
-          setIsAuthenticated(true);
-          setLikedArticles(parsedUser.likedArticles || []);
-          setSavedArticles(parsedUser.savedArticles || []);
-        }
-      } catch (error) {
-        console.error("Failed to parse user data from localStorage:", error);
-        localStorage.removeItem("user");
-      }
-    }
-  }, []);
-
   const fetchUserData = async (userId) => {
     try {
       // If userId isn't provided, try to fetch from a generic endpoint
@@ -62,6 +42,12 @@ export const AuthProvider = ({ children }) => {
         if (userData.savedArticles) {
           setSavedArticles(userData.savedArticles);
         }
+        // Update localStorage with fresh data from server
+        try {
+          localStorage.setItem("user", JSON.stringify(userData));
+        } catch (e) {
+          console.warn("Failed to update localStorage after fetch", e);
+        }
       } else {
         console.error("Failed to fetch user data:", response.data);
       }
@@ -69,6 +55,29 @@ export const AuthProvider = ({ children }) => {
       console.error("Error fetching user data:", error);
     }
   };
+
+  // Fetch user data from backend on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        // Validate user data structure
+        if (parsedUser && typeof parsedUser === 'object' && parsedUser._id) {
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+          setLikedArticles(parsedUser.likedArticles || []);
+          setSavedArticles(parsedUser.savedArticles || []);
+
+          // Sync with server to get latest state
+          fetchUserData(parsedUser._id);
+        }
+      } catch (error) {
+        console.error("Failed to parse user data from localStorage:", error);
+        localStorage.removeItem("user");
+      }
+    }
+  }, []);
 
   const login = async (email, password) => {
     setLoading(true);
@@ -172,91 +181,116 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const likeArticle = async (articleId) => {
-    if (!user) return { success: false, message: "Not authenticated" };
-    const action = async () => {
-      await axios.post(`${API_BASE_URL}/api/articles/like/${articleId}`, { userId: user._id }, { withCredentials: true });
-      fetchUserData(user._id);
-    };
-    if (navigator.onLine) {
-      try {
-        await action();
-        return { success: true };
-      } catch (error) {
-        console.error("Like article error:", error);
-        return { success: false, message: error.message };
-      }
-    } else {
-      offlineQueue.push(action);
-      setLikedArticles((prev) => [...prev, articleId]); // Optimistic update
-      debouncedUpdateLocalStorage("likedArticles", [...likedArticles, articleId]);
-      return { success: true, message: "Action queued for offline sync" };
-    }
+  // Helper to check if an article is in the list (handles both IDs and Objects)
+  const isArticleInList = (list, articleId) => {
+    return list.some(item => {
+      const itemId = item._id || item;
+      return itemId === articleId;
+    });
   };
 
-  const unlikeArticle = async (articleId) => {
+  const toggleLike = async (article) => {
     if (!user) return { success: false, message: "Not authenticated" };
-    const action = async () => {
-      await axios.post(`${API_BASE_URL}/api/articles/unlike/${articleId}`, { userId: user._id }, { withCredentials: true });
-      fetchUserData(user._id);
-    };
-    if (navigator.onLine) {
+    const articleId = article._id || article;
+
+    const isLiked = isArticleInList(likedArticles, articleId);
+    let updatedList;
+
+    if (isLiked) {
+      // Optimistic Unlike
+      updatedList = likedArticles.filter(item => (item._id || item) !== articleId);
+      setLikedArticles(updatedList);
+
+      // Update user object and localStorage
+      const updatedUser = { ...user, likedArticles: updatedList };
+      setUser(updatedUser);
+      debouncedUpdateLocalStorage("user", updatedUser);
+
       try {
-        await action();
-        return { success: true };
+        await axios.post(`${API_BASE_URL}/api/articles/unlike/${articleId}`, { userId: user._id }, { withCredentials: true });
+        // Background sync to ensure consistency
+        // fetchUserData(user._id); // Optional: can be removed if we trust the optimistic update + mount sync
+        return { success: true, liked: false };
       } catch (error) {
         console.error("Unlike article error:", error);
+        // Revert on error
+        setLikedArticles(likedArticles);
+        setUser(user); // Revert user state
         return { success: false, message: error.message };
       }
     } else {
-      offlineQueue.push(action);
-      setLikedArticles((prev) => prev.filter((id) => id !== articleId)); // Optimistic update
-      debouncedUpdateLocalStorage("likedArticles", likedArticles.filter((id) => id !== articleId));
-      return { success: true, message: "Action queued for offline sync" };
-    }
-  };
+      // Optimistic Like
+      // If we have the full article object, store it, otherwise just the ID
+      const itemToAdd = typeof article === 'object' ? article : articleId;
+      updatedList = [...likedArticles, itemToAdd];
+      setLikedArticles(updatedList);
 
-  const saveArticle = async (articleId) => {
-    if (!user) return { success: false, message: "Not authenticated" };
-    const action = async () => {
-      await axios.post(`${API_BASE_URL}/api/articles/save/${articleId}`, { userId: user._id }, { withCredentials: true });
-      fetchUserData(user._id);
-    };
-    if (navigator.onLine) {
+      // Update user object and localStorage
+      const updatedUser = { ...user, likedArticles: updatedList };
+      setUser(updatedUser);
+      debouncedUpdateLocalStorage("user", updatedUser);
+
       try {
-        await action();
-        return { success: true };
+        await axios.post(`${API_BASE_URL}/api/articles/like/${articleId}`, { userId: user._id }, { withCredentials: true });
+        // fetchUserData(user._id);
+        return { success: true, liked: true };
       } catch (error) {
-        console.error("Save article error:", error);
+        console.error("Like article error:", error);
+        setLikedArticles(likedArticles);
+        setUser(user);
         return { success: false, message: error.message };
       }
-    } else {
-      offlineQueue.push(action);
-      setSavedArticles((prev) => [...prev, articleId]); // Optimistic update
-      debouncedUpdateLocalStorage("savedArticles", [...savedArticles, articleId]);
-      return { success: true, message: "Action queued for offline sync" };
     }
   };
 
-  const unsaveArticle = async (articleId) => {
+  const toggleSave = async (article) => {
     if (!user) return { success: false, message: "Not authenticated" };
-    const action = async () => {
-      await axios.post(`${API_BASE_URL}/api/articles/unsave/${articleId}`, { userId: user._id }, { withCredentials: true });
-      fetchUserData(user._id);
-    };
-    if (navigator.onLine) {
+    const articleId = article._id || article;
+
+    const isSaved = isArticleInList(savedArticles, articleId);
+    let updatedList;
+
+    if (isSaved) {
+      // Optimistic Unsave
+      updatedList = savedArticles.filter(item => (item._id || item) !== articleId);
+      setSavedArticles(updatedList);
+
+      // Update user object and localStorage
+      const updatedUser = { ...user, savedArticles: updatedList };
+      setUser(updatedUser);
+      debouncedUpdateLocalStorage("user", updatedUser);
+
       try {
-        await action();
-        return { success: true };
+        await axios.post(`${API_BASE_URL}/api/articles/unsave/${articleId}`, { userId: user._id }, { withCredentials: true });
+        // fetchUserData(user._id);
+        return { success: true, saved: false };
       } catch (error) {
         console.error("Unsave article error:", error);
+        setSavedArticles(savedArticles);
+        setUser(user);
         return { success: false, message: error.message };
       }
     } else {
-      offlineQueue.push(action);
-      setSavedArticles((prev) => prev.filter((id) => id !== articleId)); // Optimistic update
-      debouncedUpdateLocalStorage("savedArticles", savedArticles.filter((id) => id !== articleId));
-      return { success: true, message: "Action queued for offline sync" };
+      // Optimistic Save
+      const itemToAdd = typeof article === 'object' ? article : articleId;
+      updatedList = [...savedArticles, itemToAdd];
+      setSavedArticles(updatedList);
+
+      // Update user object and localStorage
+      const updatedUser = { ...user, savedArticles: updatedList };
+      setUser(updatedUser);
+      debouncedUpdateLocalStorage("user", updatedUser);
+
+      try {
+        await axios.post(`${API_BASE_URL}/api/articles/save/${articleId}`, { userId: user._id }, { withCredentials: true });
+        // fetchUserData(user._id);
+        return { success: true, saved: true };
+      } catch (error) {
+        console.error("Save article error:", error);
+        setSavedArticles(savedArticles);
+        setUser(user);
+        return { success: false, message: error.message };
+      }
     }
   };
 
@@ -279,10 +313,8 @@ export const AuthProvider = ({ children }) => {
     updateUser,
     likedArticles,
     savedArticles,
-    likeArticle,
-    unlikeArticle,
-    saveArticle,
-    unsaveArticle
+    toggleLike,
+    toggleSave
   };
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

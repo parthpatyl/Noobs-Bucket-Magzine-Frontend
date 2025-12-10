@@ -5,30 +5,18 @@ import { AuthContext } from "../context/AuthContext";
 import { API_BASE_URL } from "../utils/api";
 import axios from "axios";
 import { parseISO, format } from "date-fns";
-import { syncWithLocalStorage, updateLocalStorage } from '../utils/localStorage';
+
 
 
 const ArticleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, likedArticles, savedArticles, toggleLike, toggleSave } = useContext(AuthContext);
 
   const [article, setArticle] = useState(null);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [likedArticles, setLikedArticles] = useState([]);
-  const [savedArticles, setSavedArticles] = useState([]);
-
-  // Sync local state with user data
-  useEffect(() => {
-    if (user) {
-      const liked = syncWithLocalStorage(`likedArticles_${user._id}`, []);
-      const saved = syncWithLocalStorage(`savedArticles_${user._id}`, []);
-      setLikedArticles(liked);
-      setSavedArticles(saved);
-    }
-  }, [user]);
 
   // Fetch a single article ensuring backend returns lean JSON
   const fetchArticle = async () => {
@@ -98,51 +86,15 @@ const ArticleDetail = () => {
     }
   };
 
-  // Toggle like status
-  const toggleLike = async (articleId) => {
-    if (!user) return;
-    const isLiked = likedArticles.includes(articleId);
-    const updatedLikes = isLiked
-      ? likedArticles.filter(id => id !== articleId)
-      : [...likedArticles, articleId];
-    setLikedArticles(updatedLikes);
+  const isLiked = useMemo(() => {
+    if (!article) return false;
+    return likedArticles.some(item => (item._id || item) === article._id);
+  }, [likedArticles, article]);
 
-    try {
-      const response = await axios.post(`${API_BASE_URL}/api/articles/like/${articleId}`, { userId: user._id });
-      if (response.status === 200) {
-        setLikedArticles(response.data.likedArticles);
-        updateLocalStorage(`likedArticles_${user._id}`, response.data.likedArticles);
-      } else {
-        throw new Error("Failed to update like status");
-      }
-    } catch (err) {
-      console.error("Error updating like status:", err);
-      setLikedArticles(likedArticles); // rollback on error
-    }
-  };
-
-  // Toggle save status
-  const toggleSave = async (articleId) => {
-    if (!user) return;
-    const isSaved = savedArticles.includes(articleId);
-    const updatedSaves = isSaved
-      ? savedArticles.filter(id => id !== articleId)
-      : [...savedArticles, articleId];
-    setSavedArticles(updatedSaves);
-
-    try {
-      const response = await axios.post(`${API_BASE_URL}/api/articles/save/${articleId}`, { userId: user._id });
-      if (response.status === 200) {
-        setSavedArticles(response.data.savedArticles);
-        updateLocalStorage(`savedArticles_${user._id}`, response.data.savedArticles);
-      } else {
-        throw new Error("Failed to update saved status");
-      }
-    } catch (err) {
-      console.error("Error updating saved articles:", err);
-      setSavedArticles(savedArticles); // rollback on error
-    }
-  };
+  const isSaved = useMemo(() => {
+    if (!article) return false;
+    return savedArticles.some(item => (item._id || item) === article._id);
+  }, [savedArticles, article]);
 
   // Share article using navigator.share
   const shareArticle = (article) => {
@@ -152,8 +104,8 @@ const ArticleDetail = () => {
         text: article.excerpt,
         url: window.location.href,
       })
-      .then(() => console.log("Article shared successfully"))
-      .catch((error) => console.error("Error sharing article:", error));
+        .then(() => console.log("Article shared successfully"))
+        .catch((error) => console.error("Error sharing article:", error));
     } else {
       alert("Sharing is not supported in this browser.");
     }
@@ -193,11 +145,10 @@ const ArticleDetail = () => {
                 <button
                   key={categoryName}
                   onClick={() => handleCategoryClick(categoryName)}
-                  className={`w-full text-left py-2 px-3 rounded transition-colors ${
-                    article.category === categoryName
-                      ? "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
-                  }`}
+                  className={`w-full text-left py-2 px-3 rounded transition-colors ${article.category === categoryName
+                    ? "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+                    }`}
                 >
                   <div className="flex justify-between items-center">
                     <span>{categoryName}</span>
@@ -216,20 +167,18 @@ const ArticleDetail = () => {
                   <h1 className="text-3xl font-bold mt-2 dark:text-white">{article.title}</h1>
                   <div className="flex space-x-2 mt-4">
                     <button
-                      onClick={() => toggleLike(article._id)}
-                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                        likedArticles.includes(article._id) ? "text-red-500" : "text-gray-500"
-                      }`}
+                      onClick={() => toggleLike(article)}
+                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isLiked ? "text-red-500" : "text-gray-500"
+                        }`}
                     >
-                      <Heart className="h-5 w-5" fill={likedArticles.includes(article._id) ? "currentColor" : "none"} />
+                      <Heart className="h-5 w-5" fill={isLiked ? "currentColor" : "none"} />
                     </button>
                     <button
-                      onClick={() => toggleSave(article._id)}
-                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                        savedArticles.includes(article._id) ? "text-blue-500" : "text-gray-500"
-                      }`}
+                      onClick={() => toggleSave(article)}
+                      className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isSaved ? "text-blue-500" : "text-gray-500"
+                        }`}
                     >
-                      <Bookmark className="h-5 w-5" fill={savedArticles.includes(article._id) ? "currentColor" : "none"} />
+                      <Bookmark className="h-5 w-5" fill={isSaved ? "currentColor" : "none"} />
                     </button>
                     <button
                       onClick={() => shareArticle(article)}

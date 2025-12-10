@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
 import { parseISO, format } from "date-fns";
-import { syncWithLocalStorage, updateLocalStorage } from '../utils/localStorage';
+
 
 const formatArticleDate = (rawDate) => {
   if (!rawDate) return "No date available";
@@ -43,11 +43,10 @@ const MagazinePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState(null);
-  const [savedArticles, setSavedArticles] = useState([]);
-  const [likedArticles, setLikedArticles] = useState([]);
+
   const itemsPerPage = 8;
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useContext(AuthContext);
+  const { isAuthenticated, user, logout, likedArticles, savedArticles, toggleLike, toggleSave } = useContext(AuthContext);
 
   const handleReadMore = (article) => {
     navigate(`/article/${article._id}`);
@@ -69,15 +68,6 @@ const MagazinePage = () => {
     fetchArticles();
   }, []);
 
-  // Sync saved and liked articles from user data
-  useEffect(() => {
-    if (user) {
-      setSavedArticles(user.savedArticles || []);
-      setLikedArticles(user.likedArticles || []);
-    }
-  }, [user]);
-
-
   // Derive a list of unique categories from articles
   const categories = [...new Set(articles.map(article => article.category))];
 
@@ -94,54 +84,6 @@ const MagazinePage = () => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  // Toggle save status using user._id consistently
-  const toggleSave = async (articleId) => {
-    if (!user) return;
-    const isAlreadySaved = savedArticles.some(id => id === articleId);
-    const updatedSaves = isAlreadySaved
-      ? savedArticles.filter(id => id !== articleId)
-      : [...savedArticles, articleId];
-    setSavedArticles(updatedSaves);
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/articles/save/${articleId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user._id })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Failed to update saved status");
-      setSavedArticles(data.savedArticles);
-      syncWithLocalStorage(`savedArticles_${user._id}`, data.savedArticles);
-    } catch (error) {
-      console.error("❌ Error updating saved articles:", error);
-      // Optionally revert state on error
-    }
-  };
-
-  // Toggle like status using user._id consistently
-  const toggleLike = async (articleId) => {
-    if (!user) return;
-    const isAlreadyLiked = likedArticles.some(id => id === articleId);
-    const updatedLikes = isAlreadyLiked
-      ? likedArticles.filter(id => id !== articleId)
-      : [...likedArticles, articleId];
-    setLikedArticles(updatedLikes);
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/articles/like/${articleId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user._id })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Failed to update like status");
-      setLikedArticles(data.likedArticles);
-      syncWithLocalStorage(`likedArticles_${user._id}`, data.likedArticles);
-    } catch (error) {
-      console.error("❌ Error updating liked articles:", error);
-      // Optionally revert state on error
-    }
-  };
 
   const shareArticle = (article) => {
     if (navigator.share) {
@@ -243,18 +185,18 @@ const MagazinePage = () => {
                       </div>
                       <div className="flex space-x-2">
                         <button
-                          onClick={() => toggleLike(article._id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${likedArticles.some(id => id === article._id) ? "text-red-500" : "text-gray-500"
+                          onClick={() => toggleLike(article)}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${likedArticles.some(item => (item._id || item) === article._id) ? "text-red-500" : "text-gray-500"
                             }`}
                         >
-                          <Heart className="h-5 w-5" fill={likedArticles.some(id => id === article._id) ? "currentColor" : "none"} />
+                          <Heart className="h-5 w-5" fill={likedArticles.some(item => (item._id || item) === article._id) ? "currentColor" : "none"} />
                         </button>
                         <button
-                          onClick={() => toggleSave(article._id)}
-                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${savedArticles.some(id => id === article._id) ? "text-blue-500" : "text-gray-500"
+                          onClick={() => toggleSave(article)}
+                          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${savedArticles.some(item => (item._id || item) === article._id) ? "text-blue-500" : "text-gray-500"
                             }`}
                         >
-                          <Bookmark className="h-5 w-5" fill={savedArticles.some(id => id === article._id) ? "currentColor" : "none"} />
+                          <Bookmark className="h-5 w-5" fill={savedArticles.some(item => (item._id || item) === article._id) ? "currentColor" : "none"} />
                         </button>
                         <button
                           onClick={() => shareArticle(article)}
@@ -314,13 +256,13 @@ const MagazinePage = () => {
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold mb-4 dark:text-white">Saved Articles</h2>
                 {articles
-                  .filter(article => savedArticles.some(id => id === article._id))
+                  .filter(article => savedArticles.some(item => (item._id || item) === article._id))
                   .map(article => (
                     <div key={article._id} className="border-b last:border-b-0 pb-4 mb-4 last:mb-0">
                       <h4 className="font-medium dark:text-white">{article.title}</h4>
                       <div className="flex justify-between items-center mt-2">
                         <p className="text-sm text-gray-500 dark:text-gray-400">{article.readtime}</p>
-                        <button onClick={() => toggleSave(article._id)} className="text-blue-500">
+                        <button onClick={() => toggleSave(article)} className="text-blue-500">
                           <Bookmark className="h-4 w-4" fill="currentColor" />
                         </button>
                       </div>
