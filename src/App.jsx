@@ -6,21 +6,28 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import ArticleDetail from './components/ArticleDetail';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './components/Notification';
 import UserProfile from './components/UserProfile';
+import SavedArticlesPage from './components/SavedArticlesPage';
+import LikedArticlesPage from './components/LikedArticlesPage';
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/magazine" element={<MagazinePage />} />
-          <Route path="/auth/login" element={<Login />} />
-          <Route path="/auth/register" element={<Register />} />
-          <Route path="/article/:id" element={<ArticleDetail />} />
-          <Route path="/user/:id" element={<UserProfile />} />
-        </Routes>
-      </Router>
+      <NotificationProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/magazine" element={<MagazinePage />} />
+            <Route path="/auth/login" element={<Login />} />
+            <Route path="/auth/register" element={<Register />} />
+            <Route path="/article/:id" element={<ArticleDetail />} />
+            <Route path="/user/:id" element={<UserProfile />} />
+            <Route path="/user/:id/saved" element={<SavedArticlesPage />} />
+            <Route path="/user/:id/liked" element={<LikedArticlesPage />} />
+          </Routes>
+        </Router>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

@@ -159,12 +159,82 @@ export const AuthProvider = ({ children }) => {
 
   const updateUser = async (updatedData) => {
     try {
+      if (!user || !user._id) {
+        throw new Error("User not authenticated");
+      }
+
+      // Optimistic update
       const updatedUser = { ...user, ...updatedData };
       setUser(updatedUser);
+      
+      // Update localStorage
+      try {
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      } catch (error) {
+        console.warn("Failed to update localStorage:", error);
+      }
+
+      // Call backend API
+      const response = await axios.put(
+        `${API_BASE_URL}/auth/user/${user._id}`,
+        updatedData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+
+      if (response.data && response.data.user) {
+        // Update with server response to ensure consistency
+        setUser(response.data.user);
+        try {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+        } catch (error) {
+          console.warn("Failed to update localStorage with server response:", error);
+        }
+      }
+
       return { success: true };
     } catch (error) {
       console.error("Update user error:", error);
+      // Revert optimistic update on error
+      if (user) {
+        setUser(user);
+        try {
+          localStorage.setItem("user", JSON.stringify(user));
+        } catch (error) {
+          console.warn("Failed to revert localStorage:", error);
+        }
+      }
       return { success: false, message: error.message };
+    }
+  };
+
+  // Change user password
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      if (!user || !user._id) {
+        throw new Error("User not authenticated");
+      }
+
+      const response = await axios.post(
+        `${API_BASE_URL}/auth/change-password/${user._id}`,
+        { currentPassword, newPassword },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+
+      if (response.data && response.data.success) {
+        return { success: true, message: response.data.message };
+      } else {
+        return { success: false, message: response.data.message || "Password change failed" };
+      }
+    } catch (error) {
+      console.error("Change password error:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Failed to change password";
+      return { success: false, message: errorMessage };
     }
   };
 
@@ -311,6 +381,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     register,
     updateUser,
+    changePassword,
     likedArticles,
     savedArticles,
     toggleLike,

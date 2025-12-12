@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { ChevronLeft, ChevronRight, BookOpen, Search, Heart, Share2, Bookmark } from 'lucide-react';
 import CategoryFilter from './CategoryFilter';
 import FeaturedArticle from './FeaturedArticle';
@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
 import { parseISO, format } from "date-fns";
+import ProfileDropdown from './auth/ProfileDropdown';
 
 
 const formatArticleDate = (rawDate) => {
@@ -103,7 +104,7 @@ const MagazinePage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <BookOpen className="h-8 w-8 text-brand-primary" />
-              <h1 className="text-2xl font-bold text-brand-text">Noob's Bucket</h1>
+              <h1 className="text-2xl font-bold text-brand-text">Noobs Bucket</h1>
             </div>
             <div className="flex items-center space-x-4">
               <div className="relative">
@@ -118,18 +119,7 @@ const MagazinePage = () => {
               </div>
               {isAuthenticated ? (
                 <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => navigate(`/user/${user._id}`)}
-                    className="px-4 py-2 bg-brand-primary text-white rounded-xl hover:bg-orange-600 shadow-glow transition-all"
-                  >
-                    Profile
-                  </button>
-                  <button
-                    onClick={logout}
-                    className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 shadow-glow transition-all"
-                  >
-                    Logout
-                  </button>
+                  <ProfileDropdown />
                 </div>
               ) : (
                 <>
@@ -182,15 +172,15 @@ const MagazinePage = () => {
 
           <div className="lg:col-span-7 space-y-6">
             {currentArticles.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-fr">
                 {currentArticles.map(article => (
-                  <div key={article._id} className="bg-brand-surface rounded-xl shadow-lg overflow-hidden border border-white/5 hover:border-brand-primary/30 transition-all hover:shadow-glow duration-300 group">
+                  <div key={article._id} className="bg-brand-surface rounded-xl shadow-lg overflow-hidden border border-white/5 hover:border-brand-primary/30 transition-all hover:shadow-glow duration-300 group flex flex-col h-full">
                     <img
                       src={article.image && Array.isArray(article.image) ? article.image[0] : article.image}
                       alt={article.title}
                       className="w-full h-48 object-cover"
                     />
-                    <div className="p-6">
+                    <div className="p-6 flex flex-col justify-between flex-1 min-h-[140px]">
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <span className="text-sm font-semibold text-brand-primary">
@@ -221,18 +211,22 @@ const MagazinePage = () => {
                           </button>
                         </div>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-300">{article.excerpt}</p>
-                      <div className="mt-4 flex justify-between items-center">
-                        <div className="flex items-center space-x-4">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">{article.readtime}</span>
-                          <span className="text-sm text-gray-500 dark:text-gray-400">{formatArticleDate(article.date)}</span>
+                      <div className="flex-1">
+                        <p className="text-gray-600 dark:text-gray-300">{article.excerpt}</p>
+                      </div>
+                      <div className="mt-4 flex items-center">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                          <span>{article.readtime}</span>
+                          <span>{formatArticleDate(article.date)}</span>
                         </div>
-                        <button
-                          onClick={() => handleReadMore(article)}
-                          className="text-brand-primary font-semibold hover:text-brand-secondary transition-colors"
-                        >
-                          Read More →
-                        </button>
+                        <div className="ml-auto">
+                          <button
+                            onClick={() => handleReadMore(article)}
+                            className="text-brand-primary font-semibold hover:text-brand-secondary transition-colors"
+                          >
+                            Read More →
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -8,15 +8,59 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
   const { register } = useContext(AuthContext);
 
+  // Email validation function
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  // Password validation function
+  const validatePassword = (password) => {
+    // Minimum 8 characters, at least one letter and one number
+    const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
+    return re.test(password);
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
+    
+    // Reset errors
+    setEmailError('');
+    setPasswordError('');
+    
     try {
-      if (password !== confirmPassword) {
-        throw new Error('Passwords do not match');
+      // Validate email
+      if (!email) {
+        setEmailError('Email is required');
+        return;
       }
+      
+      if (!validateEmail(email)) {
+        setEmailError('Please enter a valid email address');
+        return;
+      }
+
+      // Validate password
+      if (!password) {
+        setPasswordError('Password is required');
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        setPasswordError('Password must be at least 8 characters with at least one letter and one number');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setPasswordError('Passwords do not match');
+        return;
+      }
+
       const result = await register(name, email, password);
       if (result.success) {
         navigate('/auth/login');
@@ -53,9 +97,10 @@ const Register = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 p-3 w-full bg-brand-bg border border-white/10 rounded-lg text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+              className={`mt-1 p-3 w-full bg-brand-bg border ${emailError ? 'border-red-500' : 'border-white/10'} rounded-lg text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all`}
               required
             />
+            {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-brand-muted mb-1">Password</label>
@@ -63,9 +108,10 @@ const Register = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 p-3 w-full bg-brand-bg border border-white/10 rounded-lg text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+              className={`mt-1 p-3 w-full bg-brand-bg border ${passwordError ? 'border-red-500' : 'border-white/10'} rounded-lg text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all`}
               required
             />
+            {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
           </div>
           <div className="mb-6">
             <label className="block text-sm font-medium text-brand-muted mb-1">Confirm Password</label>
@@ -73,7 +119,7 @@ const Register = () => {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 p-3 w-full bg-brand-bg border border-white/10 rounded-lg text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+              className={`mt-1 p-3 w-full bg-brand-bg border ${passwordError ? 'border-red-500' : 'border-white/10'} rounded-lg text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all`}
               required
             />
           </div>
